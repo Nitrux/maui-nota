@@ -58,6 +58,20 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
+            label1.text: i18n("Close Tab")
+
+            Maui.ToolActions
+            {
+                checkable: false
+                autoExclusive: false
+
+                Action { text: "Ctrl" }
+                Action { text: "W" }
+            }
+        }
+
+        Maui.FlexSectionItem
+        {
             label1.text: i18n("Show Shortcuts")
 
             Maui.ToolActions
@@ -121,7 +135,21 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
-            label1.text: i18n("Find and Replace")
+            label1.text: i18n("Find")
+
+            Maui.ToolActions
+            {
+                checkable: false
+                autoExclusive: false
+
+                Action { text: "Ctrl" }
+                Action { text: "F" }
+            }
+        }
+
+        Maui.FlexSectionItem
+        {
+            label1.text: i18n("Replace")
 
             Maui.ToolActions
             {
@@ -149,7 +177,7 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
-            label1.text: i18n("Toggle Line and Word Counter")
+            label1.text: i18n("Toggle Document Stats")
 
             Maui.ToolActions
             {

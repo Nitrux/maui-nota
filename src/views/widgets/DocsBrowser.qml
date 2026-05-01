@@ -8,6 +8,7 @@ import org.mauikit.filebrowsing as FB
 Maui.AltBrowser
 {
     id: control
+    background: null
 
     enableLassoSelection: true
 

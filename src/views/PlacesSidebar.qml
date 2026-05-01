@@ -25,11 +25,7 @@ Loader
         property alias browser : browserView
         clip: true
         Maui.Theme.colorSet: Maui.Theme.Window
-        background: Rectangle
-        {
-            color: Maui.Theme.alternateBackgroundColor
-            radius: Maui.Style.radiusV
-        }
+        background: null
 
         footerMargins: Maui.Style.defaultPadding
         footBar.middleContent: ComboBox
@@ -216,4 +212,3 @@ Loader
         }
     }
 }
-

@@ -3,6 +3,7 @@
 #include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
+#include <QSurfaceFormat>
 #include <QUrl>
 
 #include <KLocalizedString>
@@ -21,6 +22,10 @@
 
 Q_DECL_EXPORT int main(int argc, char *argv[])
 {
+    QSurfaceFormat format;
+    format.setAlphaBufferSize(8);
+    QSurfaceFormat::setDefaultFormat(format);
+
     QApplication app(argc, argv);
 
     app.setOrganizationName(QStringLiteral("Maui"));

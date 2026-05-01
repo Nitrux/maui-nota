@@ -11,6 +11,11 @@ Maui.SplitViewItem
     property alias editor : _editor
     property alias fileUrl : _editor.fileUrl
     property alias title : _editor.title
+    readonly property int wordCount:
+        {
+            const text = _editor.body.text.trim()
+            return text.length === 0 ? 0 : text.split(/\s+/).length
+        }
 
     Maui.Controls.title : title
     Maui.Controls.badgeText: editor.document.modified ? "*" : ""
@@ -36,6 +41,8 @@ Maui.SplitViewItem
         document.enableSyntaxHighlighting: settings.enableSyntaxHighlighting
         document.autoSave: settings.autoSave
         document.tabSpace: ((settings.tabSpace+1) * body.font.pointSize) / 2
+        spellcheckEnabled: false
+        showSpellingContextMenu: false
 
         onFileUrlChanged:
         {
@@ -124,7 +131,7 @@ Maui.SplitViewItem
         {
             id: _linesCount
             visible: settings.showWordCount
-            text: _editor.body.length + " / " + _editor.body.lineCount
+            text: i18n("%1 lines / %2 words", _editor.body.lineCount, control.wordCount)
             color: _editor.body.color
 
             anchors

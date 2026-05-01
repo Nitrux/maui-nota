@@ -16,6 +16,8 @@ import "views/widgets" as Widgets
 Maui.ApplicationWindow
 {
     id: root
+    color: "transparent"
+    background: null
 
     title: currentEditor ? currentTab.title : ""
 
@@ -145,6 +147,14 @@ Maui.ApplicationWindow
 
     Shortcut
     {
+        sequence: "Ctrl+W"
+        context: Qt.WindowShortcut
+        enabled: editorView.count > 0
+        onActivated: editorView.closeCurrentTab()
+    }
+
+    Shortcut
+    {
         sequence: "Ctrl+S"
         context: Qt.WindowShortcut
         enabled: !!currentEditor
@@ -161,7 +171,7 @@ Maui.ApplicationWindow
 
     Shortcut
     {
-        sequence: "Ctrl+R"
+        sequence: "Ctrl+F"
         context: Qt.WindowShortcut
         enabled: !!currentEditor
         onActivated: toggleFindBar()
@@ -238,17 +248,36 @@ Maui.ApplicationWindow
         }
     }
 
+    Maui.WindowBlur
+    {
+        view: root
+        geometry: Qt.rect(0, 0, root.width, root.height)
+        windowRadius: Maui.Style.radiusV
+        enabled: true
+    }
+
+    Rectangle
+    {
+        anchors.fill: parent
+        color: Maui.Theme.backgroundColor
+        opacity: 0.76
+        radius: Maui.Style.radiusV
+    }
+
     StackView
     {
         id: _stackView
         anchors.fill: parent
+        background: null
 
         initialItem: Maui.SideBarView
         {
             id: _sideBarView
+            visible: StackView.status !== StackView.Inactive
             sideBar.enabled: settings.enableSidebar
             sideBar.autoHide: true
             sideBar.autoShow: false
+            background: null
             sideBarContent: PlacesSidebar
             {
                 id : _drawer
@@ -260,11 +289,6 @@ Maui.ApplicationWindow
             {
                 id: editorView
                 anchors.fill: parent
-            }
-
-            background: Rectangle
-            {
-                color: currentEditor ? currentEditor.document.backgroundColor : Maui.Theme.backgroundColor
             }
         }
     }
@@ -367,8 +391,6 @@ Maui.ApplicationWindow
 
         if(settings.restoreSession && editorView.restoreSession())
             return
-
-        openTab()
     }
 
     function openFile(url : string)

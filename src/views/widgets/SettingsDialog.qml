@@ -89,7 +89,7 @@ Maui.SettingsDialog
             {
                 checkable: true
                 checked: settings.showLineNumbers
-                onToggled: settings.showLineNumbers = !settings.showLineNumbers
+                onToggled: settings.showLineNumbers = checked
             }
         }
 
@@ -102,7 +102,7 @@ Maui.SettingsDialog
             {
                 checkable: true
                 checked: settings.wrapText
-                onToggled: settings.wrapText = !settings.wrapText
+                onToggled: settings.wrapText = checked
             }
         }
 
