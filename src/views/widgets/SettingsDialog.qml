@@ -35,7 +35,6 @@ Maui.SettingsDialog
     Maui.SectionGroup
     {
         title: i18n("General")
-        //        description: i18n("Configure the app UI, behaviour and plugins.")
 
         Maui.FlexSectionItem
         {
@@ -62,12 +61,24 @@ Maui.SettingsDialog
                 onToggled: settings.autoSave = !settings.autoSave
             }
         }
+
+        Maui.FlexSectionItem
+        {
+            label1.text: i18n("Restore Session")
+            label2.text: i18n("Reopen the previously saved files and tab layout when launching Nota.")
+
+            Switch
+            {
+                checkable: true
+                checked: settings.restoreSession
+                onToggled: settings.restoreSession = !settings.restoreSession
+            }
+        }
     }
 
     Maui.SectionGroup
     {
         title: i18n("Editor")
-        //        description: i18n("Configure the look and feel of the editor. The settings are applied globally.")
 
         Maui.FlexSectionItem
         {
@@ -97,8 +108,8 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
-            label1.text: i18n("Syntax Highlighting Languages")
-            label2.text: i18n("Display available languages.")
+            label1.text: i18n("Language Selector")
+            label2.text: i18n("Display the active syntax-highlighting language selector in the editor footer.")
 
             Switch
             {
@@ -163,57 +174,6 @@ Maui.SettingsDialog
                 from: 2; to : 500
                 value: settings.tabSpace
                 onValueChanged: settings.tabSpace = value
-            }
-        }
-    }
-    
-    Maui.SectionGroup
-    {
-        title: i18n("Terminal")
-        description: i18n("Embedded terminal options.")
-        enabled: Maui.Handy.isLinux
-
-        Maui.FlexSectionItem
-        {
-            label1.text:  i18n("Sync Terminal")
-            label2.text: i18n("Sync the terminal to the browser current working directory.")
-
-            Switch
-            {
-                checkable: true
-                checked:  settings.syncTerminal
-                onToggled: settings.restoreSession = !settings.syncTerminal
-            }
-        }
-
-        Maui.FlexSectionItem
-        {
-            label1.text: i18n("Adaptive Color Scheme")
-            label2.text: i18n("Colors based on the current style.")
-
-            Switch
-            {
-                checked: settings.terminalFollowsColorScheme
-                onToggled: settings.terminalFollowsColorScheme = !settings.terminalFollowsColorScheme
-            }
-        }
-        
-        Maui.FlexSectionItem
-        {
-            label1.text: i18n("Color Scheme")
-            label2.text: i18n("Change the color scheme of the terminal.")
-            enabled: !settings.terminalFollowsColorScheme
-
-            ToolButton
-            {
-                checkable: true
-                icon.name: "go-next"
-                onToggled:
-                {
-                    var component = Qt.createComponent("TerminalColorSchemes.qml");
-                    var page = component.createObject(control);
-                    control.addPage(page)
-                }
             }
         }
     }

@@ -6,8 +6,6 @@ import org.mauikit.controls as Maui
 import org.mauikit.filebrowsing as FB
 import org.mauikit.texteditor as TE
 
-import org.maui.nota as Nota
-
 Pane
 {
     id: control
@@ -15,58 +13,19 @@ Pane
     readonly property alias count: _tabView.count
 
     readonly property alias currentTab : _tabView.currentItem
-    readonly property bool currentFileExistsLocally : FB.FM.fileExists(control.currentEditor.fileUrl)
+    readonly property bool currentFileExistsLocally : currentEditor ? FB.FM.fileExists(control.currentEditor.fileUrl) : false
     readonly property TE.TextEditor currentEditor: currentTab ? currentTab.currentItem.editor : null
 
     readonly property alias listView: _tabView
-    readonly property alias plugin: _pluginLayout
     readonly property alias model : _tabView.contentModel
     readonly property alias tabView : _tabView
+    property bool restoringSession: false
 
     padding: 0
     background: null
 
-    Action
-    {
-        id: _openFileAction
-        icon.name: "folder-open"
-        text: i18n("Open Files")
-        shortcut: "Ctrl+O"
-
-        onTriggered:
-        {
-            openFileDialog()
-        }
-    }
-
-    Action
-    {
-        id: _openRecentFileAction
-        icon.name: "folder-recent"
-        text: i18n("Recent Files")
-        shortcut: "Ctrl+Shift+R"
-
-        onTriggered:
-        {
-            _stackView.push(historyViewComponent)
-        }
-    }
-
-    Action
-    {
-        id: _newFileAction
-        icon.name: "list-add"
-        text: i18n("New")
-        shortcut: "Ctrl+N"
-        onTriggered:
-        {
-            editorView.openTab("")
-        }
-    }
-
     contentItem: ColumnLayout
     {
-        id: _pluginLayout
         spacing: 0
 
         Maui.TabView
@@ -87,7 +46,9 @@ Pane
 
             holder.title: i18n("Create a New Document")
             holder.body: i18n("You can create or open a new document.")
-            holder.actions: [_newFileAction, _openFileAction, _openRecentFileAction]
+            holder.actions: [newFileAction, openFileAction, openRecentFileAction]
+
+            onCurrentIndexChanged: persistSession()
 
             Connections
             {
@@ -101,6 +62,7 @@ Pane
                     }
                 }
             }
+
             tabBar.visible: true
             tabBar.showNewTabButton: false
             tabBar.leftContent: Loader
@@ -148,62 +110,20 @@ Pane
                     {
                         icon.name: "list-add"
 
-                        MenuItem
-                        {
-                            action: _newFileAction
-                        }
-
-                        MenuItem
-                        {
-                            action: _openFileAction
-                        }
-
-                        MenuItem
-                        {
-                            action: _openRecentFileAction
-                        }
+                        MenuItem { action: newFileAction }
+                        MenuItem { action: openFileAction }
+                        MenuItem { action: openRecentFileAction }
 
                         MenuSeparator {}
 
-                        Maui.MenuItemActionRow
+                        MenuItem
                         {
-                            Action
-                            {
-                                icon.name: checked ? "view-readermode-active" : "view-readermode"
-                                text: i18n("Focus")
-                                checked: root.focusMode
-                                checkable: true
-                                onTriggered: root.focusMode = !root.focusMode
-                            }
-
-                            Action
-                            {
-                                text: i18n("Terminal")
-                                icon.name: "dialog-scripts"
-                                enabled: Maui.Handy.isLinux
-                                onTriggered: currentTab.toggleTerminal()
-                                checkable: true
-                                checked: currentTab ? currentTab.terminalVisible : false
-                            }
-
-                            Action
-                            {
-                                enabled: settings.supportSplit
-                                text: i18n("Split View")
-                                icon.name: root.currentTab.orientation === Qt.Horizontal ? "view-split-left-right" : "view-split-top-bottom"
-                                checked: root.currentTab && root.currentTab.count === 2
-                                checkable: true
-                                onTriggered:
-                                {
-                                    if(root.currentTab.count === 2)
-                                    {
-                                        root.currentTab.pop()
-                                        return
-                                    }//close the inactive split
-
-                                    root.currentTab.split("")
-                                }
-                            }
+                            enabled: settings.supportSplit && !!root.currentTab
+                            text: i18n("Split View")
+                            icon.name: root.currentTab && root.currentTab.orientation === Qt.Horizontal ? "view-split-left-right" : "view-split-top-bottom"
+                            checkable: true
+                            checked: root.currentTab && root.currentTab.count === 2
+                            onTriggered: toggleSplitView()
                         }
 
                         MenuSeparator {}
@@ -212,33 +132,14 @@ Pane
                         {
                             text: i18n("Shortcuts")
                             icon.name: "configure-shortcuts"
-                            onTriggered:
-                            {
-                                var dialog = _shortcutsDialogComponent.createObject(root)
-                                dialog.open()
-                            }
+                            onTriggered: openShortcutsDialog()
                         }
 
                         MenuItem
                         {
                             text: i18n("Settings")
                             icon.name: "settings-configure"
-                            onTriggered:
-                            {
-                                var dialog = _settingsDialogComponent.createObject(root)
-                                dialog.open()
-                            }
-                        }
-
-                        MenuItem
-                        {
-                            text: i18n("Plugins")
-                            icon.name: "system-run"
-                            onTriggered:
-                            {
-                                var dialog = _plugingsDialogComponent.createObject(root)
-                                dialog.open()
-                            }
+                            onTriggered: openSettingsDialog()
                         }
 
                         MenuItem
@@ -554,6 +455,27 @@ Pane
         EditorLayout {}
     }
 
+    readonly property Action openFileAction: Action
+    {
+        icon.name: "folder-open"
+        text: i18n("Open Files")
+        onTriggered: openFileDialog()
+    }
+
+    readonly property Action openRecentFileAction: Action
+    {
+        icon.name: "folder-recent"
+        text: i18n("Recent Files")
+        onTriggered: openRecentFilesDialog()
+    }
+
+    readonly property Action newFileAction: Action
+    {
+        icon.name: "list-add"
+        text: i18n("New")
+        onTriggered: editorView.openTab("")
+    }
+
     function unsavedTabSplits(index) //which split indexes are unsaved
     {
         var indexes = []
@@ -595,29 +517,39 @@ Pane
         return [-1,-1]
     }
 
-    function openTab(path)
+    function openTab(path, options)
     {
+        options = options || {}
+
         const index = fileIndex(path)
 
         if(index[0] >= 0)
         {
             _tabView.currentIndex = index[0]
             currentTab.currentIndex = index[1]
+            persistSession()
             return
         }
 
-        _tabView.addTab(_editorLayoutComponent, {"path": path})
-        historyList.append(path)
+        const tabProps = options.tabProps || {"path": path}
+        _tabView.addTab(_editorLayoutComponent, tabProps)
 
-        if(_stackView.depth === 2)
+        if(path && !options.skipHistory)
+            historyList.append(path)
+
+        if(_stackView.depth === 2 && !options.keepRecentView)
         {
             _stackView.pop()
         }
+
+        if(!options.skipPersist)
+            persistSession()
     }
 
     function closeTab(index) //no questions asked
     {
         _tabView.closeTab(index)
+        persistSession()
     }
 
     function saveFile(path, item)
@@ -637,6 +569,7 @@ Pane
                              {
                                  item.document.saveAs(paths[0])
                                  historyList.append(paths[0])
+                                 persistSession()
                              }})
 
             var dialog = _fileDialogComponent.createObject(root, props)
@@ -647,5 +580,108 @@ Pane
     function isUrlOpen(url : string) : bool
     {
         return fileIndex(url)[0] >= 0;
+    }
+
+    function openGoToLineDialog()
+    {
+        if(!currentEditor)
+            return
+
+        const dialog = _goToLineDialogComponent.createObject(root)
+        dialog.open()
+    }
+
+    function toggleSplitView()
+    {
+        if(!currentTab || !settings.supportSplit)
+            return
+
+        if(currentTab.count === 2)
+        {
+            currentTab.pop()
+            return
+        }
+
+        currentTab.split("")
+    }
+
+    function sessionState()
+    {
+        const state = {
+            currentTabIndex: Math.max(0, _tabView.currentIndex),
+            tabs: []
+        }
+
+        for(var i = 0; i < control.count; i++)
+        {
+            const tab = control.model.get(i)
+            const tabState = tab.sessionState()
+
+            if(tabState)
+                state.tabs.push(tabState)
+        }
+
+        if(state.tabs.length === 0)
+            return null
+
+        state.currentTabIndex = Math.min(state.currentTabIndex, state.tabs.length - 1)
+        return state
+    }
+
+    function persistSession()
+    {
+        if(restoringSession)
+            return
+
+        const state = sessionState()
+        settings.sessionState = state ? JSON.stringify(state) : ""
+    }
+
+    function restoreSession()
+    {
+        if(!settings.sessionState || settings.sessionState.length === 0)
+            return false
+
+        let state = null
+
+        try
+        {
+            state = JSON.parse(settings.sessionState)
+        } catch (error)
+        {
+            console.warn("Failed to parse session state", error)
+            settings.sessionState = ""
+            return false
+        }
+
+        if(!state || !state.tabs || state.tabs.length === 0)
+            return false
+
+        restoringSession = true
+
+        for(const tabState of state.tabs)
+        {
+            if(!tabState.paths || tabState.paths.length === 0)
+                continue
+
+            openTab(tabState.paths[0], {
+                skipHistory: true,
+                skipPersist: true,
+                keepRecentView: true,
+                tabProps: {
+                    paths: tabState.paths,
+                    restoredCurrentIndex: tabState.currentIndex || 0
+                }
+            })
+        }
+
+        restoringSession = false
+
+        if(control.count === 0)
+            return false
+
+        _tabView.currentIndex = Math.min(state.currentTabIndex || 0, control.count - 1)
+        persistSession()
+        return true
     }
 }

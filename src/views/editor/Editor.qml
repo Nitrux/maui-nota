@@ -4,8 +4,6 @@ import QtQuick.Controls
 import org.mauikit.controls as Maui
 import org.mauikit.texteditor as TE
 
-import org.maui.nota as Nota
-
 Maui.SplitViewItem
 {
     id: control
@@ -39,50 +37,17 @@ Maui.SplitViewItem
         document.autoSave: settings.autoSave
         document.tabSpace: ((settings.tabSpace+1) * body.font.pointSize) / 2
 
-        onFileUrlChanged: syncTerminal(_editor.fileUrl)
-
-//        footBar.visible: settings.showSyntaxHighlightingLanguages
-//        footBar.rightContent: ComboBox
-//        {
-//            model: editor.document.getLanguageNameList()
-//            currentIndex: -1
-//            onCurrentIndexChanged: editor.document.formatName = model[currentIndex]
-//        }
-
-        Keys.enabled: true
-        Keys.onPressed: (event) =>
+        onFileUrlChanged:
         {
-            if((event.key === Qt.Key_S) && (event.modifiers & Qt.ControlModifier))
-            {
-                saveFile(document.fileUrl, _editor)
-                event.accepted = true
-            }
+            _languageSelector.syncCurrentIndex()
 
-            if((event.key === Qt.Key_T) && (event.modifiers & Qt.ControlModifier))
+            if(String(_editor.fileUrl).length > 0)
             {
-                syncTerminal(_editor.fileUrl)
-                _editor.terminal.forceActiveFocus()
-                event.accepted = true
-            }
-
-            if((event.key === Qt.Key_O) && (event.modifiers & Qt.ControlModifier))
-            {
-                openFileDialog()
-                event.accepted = true
-            }
-
-            if((event.key === Qt.Key_N) && (event.modifiers & Qt.ControlModifier))
-            {
-                openTab("")
-                event.accepted = true
-            }
-
-            if((event.key === Qt.Key_L) && (event.modifiers & Qt.ControlModifier))
-            {
-                settings.showLineNumbers = !settings.showLineNumbers
-                event.accepted = true
+                historyList.append(_editor.fileUrl)
+                editorView.persistSession()
             }
         }
+        onTitleChanged: _languageSelector.syncCurrentIndex()
 
         Loader
         {
@@ -171,6 +136,33 @@ Maui.SplitViewItem
 
             opacity: 0.5
         }
+    }
+
+    ComboBox
+    {
+        id: _languageSelector
+        visible: settings.showSyntaxHighlightingLanguages
+        model: _editor.document.getLanguageNameList()
+        currentIndex: -1
+        z: 2
+
+        anchors
+        {
+            right: parent.right
+            bottom: parent.bottom
+            margins: Maui.Style.space.medium
+        }
+
+        function syncCurrentIndex()
+        {
+            const languages = _editor.document.getLanguageNameList()
+            const currentLanguage = _editor.document.formatName
+            const nextIndex = languages.indexOf(currentLanguage)
+            currentIndex = nextIndex
+        }
+
+        onActivated: _editor.document.formatName = model[index]
+        Component.onCompleted: syncCurrentIndex()
     }
 
     Component.onCompleted:

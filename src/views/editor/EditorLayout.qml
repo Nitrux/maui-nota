@@ -2,9 +2,6 @@ import QtQuick
 import QtQuick.Controls
 
 import org.mauikit.controls as Maui
-import org.mauikit.filebrowsing as FB
-
-import org.maui.nota as Nota
 
 Item
 {
@@ -14,6 +11,8 @@ Item
     Maui.Controls.toolTipText:  currentItem.fileUrl
 
     property url path
+    property var paths: []
+    property int restoredCurrentIndex: 0
 
     property alias currentIndex : _splitView.currentIndex
     property alias orientation : _splitView.orientation
@@ -24,88 +23,18 @@ Item
     readonly property string title : count === 2 ?  model.get(0).title + "  -  " + model.get(1).title : currentItem.title
 
     readonly property alias editor : _splitView.currentItem
-    readonly property alias terminal : terminalLoader.item
-    property bool terminalVisible : false
-
-    Keys.enabled: true
-    Keys.onPressed: (event) =>
-                    {
-                        if(event.key === Qt.Key_F3)
-                        {
-                            if(control.count === 2)
-                            {
-                                pop()
-                                return
-                            }//close the inactive split
-
-                            split("")
-                            event.accepted = true
-                        }
-
-                        if((event.key === Qt.Key_Space) && (event.modifiers & Qt.ControlModifier))
-                        {
-                            tabView.findTab()
-                            event.accepted = true
-                        }
-
-
-                        if(event.key === Qt.Key_F4)
-                        {
-                            toggleTerminal()
-                            event.accepted = true
-                        }
-                    }
 
     Maui.SplitView
     {
+        id: _splitView
+
         anchors.fill: parent
-        orientation: Qt.Vertical
+        orientation : width >= 600 ? Qt.Horizontal : Qt.Vertical
         background: null
         clip: false
 
-        Maui.SplitView
-        {
-            id: _splitView
-
-            SplitView.fillHeight: true
-            SplitView.fillWidth: true
-
-            orientation : width >= 600 ? Qt.Horizontal : Qt.Vertical
-
-            onCurrentItemChanged: syncTerminal(control.editor.fileUrl)
-
-            Component.onCompleted: split(control.path)
-            background: null
-            clip: false
-        }
-
-        Maui.SplitViewItem
-        {
-            SplitView.fillWidth: true
-            SplitView.preferredHeight: 200
-            SplitView.maximumHeight: parent.height * 0.5
-            SplitView.minimumHeight : 100
-            background: null
-            autoClose: false
-            visible: control.terminalVisible
-            focus: false
-            focusPolicy: Qt.NoFocus
-
-            Loader
-            {
-                id: terminalLoader
-                asynchronous: true
-                active: Maui.Handy.isLinux
-                visible: active && control.terminalVisible
-                anchors.fill: parent
-                source: "../Terminal.qml"
-                onLoaded:
-                {
-                    control.forceActiveFocus()
-                    syncTerminal(control.editor.fileUrl)
-                }
-            }
-        }
+        onCurrentIndexChanged: editorView.persistSession()
+        Component.onCompleted: restoreSplits()
     }
 
     Component
@@ -114,32 +43,27 @@ Item
         Editor {}
     }
 
-    function syncTerminal(path)
+    function restoreSplits()
     {
-        if(!path || !FB.FM.fileExists(path))
-            return
+        const initialPaths = paths.length ? paths : [path]
 
-        if(control.terminal && appSettings.syncTerminal)
+        for (const initialPath of initialPaths)
         {
-            const dir = String(FB.FM.fileDir(path)).replace("file://", "")
-            if(control.terminal.session.currentDir === dir)
-                return
-            control.terminal.session.changeDir(dir)
-
+            if(_splitView.count === 0 || String(initialPath).length > 0)
+                split(initialPath)
         }
-    }
 
-    function toggleTerminal()
-    {
-        control.terminalVisible = !control.terminalVisible
-
-        if(terminalVisible)
+        if(_splitView.count === 0)
         {
-            terminalLoader.item.forceActiveFocus()
-        }else
-        {
-            control.forceActiveFocus()
+            split("")
         }
+
+        if(_splitView.count > 0)
+        {
+            _splitView.currentIndex = Math.min(restoredCurrentIndex, _splitView.count - 1)
+        }
+
+        editorView.persistSession()
     }
 
     function split(path)
@@ -155,6 +79,7 @@ Item
         }
 
         _splitView.addSplit(_editorComponent, {'fileUrl': path})
+        editorView.persistSession()
     }
 
     function pop()
@@ -189,12 +114,34 @@ Item
     function destroyItem(index) //deestroys a split view withouth warning
     {
         _splitView.closeSplit(index)
+        editorView.persistSession()
     }
 
     function forceActiveFocus()
     {
         control.currentItem.forceActiveFocus()
     }
+
+    function sessionState()
+    {
+        const state = {
+            paths: [],
+            currentIndex: Math.max(0, _splitView.currentIndex)
+        }
+
+        for(var i = 0; i < _splitView.count; i++)
+        {
+            const splitItem = _splitView.itemAt(i)
+            const splitPath = String(splitItem.fileUrl)
+
+            if(splitPath.length > 0)
+                state.paths.push(splitPath)
+        }
+
+        if(state.paths.length === 0)
+            return null
+
+        state.currentIndex = Math.min(state.currentIndex, state.paths.length - 1)
+        return state
+    }
 }
-
-

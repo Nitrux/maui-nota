@@ -13,6 +13,13 @@ project(nota VERSION ${NOTA_VERSION})
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
+if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$"
+        AND CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64|AMD64)$")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
+        add_compile_options(-march=x86-64-v3)
+    endif()
+endif()
+
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 set(CMAKE_AUTOMOC ON)
@@ -24,28 +31,20 @@ set(REQUIRED_QT_VERSION 6.5.2)
 set(REQUIRED_KF_VERSION 5.240.0)
 set(REQUIRED_MAUI_VERSION 4.0.0)
 
-if(ANDROID)
-    set(ANDROID_ABIS "armeabi-v7a")
+if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    message(FATAL_ERROR "Nota only supports Linux.")
 endif()
 
 find_package(ECM ${REQUIRED_KF_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake" ${ECM_MODULE_PATH})
 
-if(ANDROID)
-    find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Sql Multimedia QuickControls2)
-elseif(UNIX)
-    find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Widgets DBus)
-endif()
+include(KDEInstallDirs)
+include(KDECMakeSettings)
 
-find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Core Qml Quick)
+find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Core Qml Quick Widgets DBus)
 find_package(KF6 ${REQUIRED_KF_VERSION} REQUIRED COMPONENTS I18n CoreAddons)
 
 find_package(MauiKit4 ${REQUIRED_MAUI_VERSION} REQUIRED COMPONENTS FileBrowsing TextEditor)
-
-if(UNIX AND NOT APPLE AND NOT ANDROID)
-    include(KDEInstallDirs)
-    include(KDECMakeSettings)
-endif()
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEClangFormat)
@@ -79,14 +78,15 @@ ecm_setup_version(${NOTA_VERSION}
     VARIABLE_PREFIX NOTA
     VERSION_HEADER "${CMAKE_CURRENT_BINARY_DIR}/nota_version.h")
 
+qt_policy(SET QTP0001 NEW)
+qt_policy(SET QTP0004 NEW)
+
 add_subdirectory(src)
 
 ki18n_install(po)
 
-if(UNIX AND NOT APPLE AND NOT ANDROID)
-    install(FILES org.kde.nota.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-    install(FILES org.kde.nota.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
-endif()
+install(FILES org.kde.nota.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES org.kde.nota.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 

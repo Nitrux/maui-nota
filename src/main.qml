@@ -25,15 +25,6 @@ Maui.ApplicationWindow
     readonly property font defaultFont : Maui.Style.monospacedFont
     readonly property alias appSettings: settings
 
-    property bool focusMode : false
-    //    Maui.WindowBlur
-    //    {
-    //        view: root
-    //        geometry: Qt.rect(root.x, root.y, root.width, root.height)
-    //        windowRadius: Maui.Style.radiusV
-    //        enabled: !Maui.Handy.isMobile
-    //    }
-
     Settings
     {
         id: settings
@@ -42,6 +33,7 @@ Maui.ApplicationWindow
         property bool showLineNumbers : true
         property bool showWordCount: false
         property bool autoSave : true
+        property bool restoreSession: true
         property bool enableSyntaxHighlighting : true
         property bool showSyntaxHighlightingLanguages: false
         property bool supportSplit :true
@@ -51,13 +43,11 @@ Maui.ApplicationWindow
         property string textColor : "black"
         property alias sideBarWidth : _sideBarView.sideBar.preferredWidth
         property font font : defaultFont
-        property bool syncTerminal: true
-        property bool terminalFollowsColorScheme: true
-        property string terminalColorScheme: "Maui-Dark"
         property bool wrapText: true
+        property string sessionState: ""
     }
 
-    //    onCurrentEditorChanged: syncSidebar(currentEditor.fileUrl)
+    onCurrentEditorChanged: syncSidebar(currentEditor ? currentEditor.fileUrl : "")
 
     onClosing: (close) =>
                {
@@ -86,13 +76,6 @@ Maui.ApplicationWindow
     Nota.History
     {
         id: historyList
-    }
-
-    Component
-    {
-        id: _plugingsDialogComponent
-
-        Widgets.PluginsDialog {}
     }
 
     Maui.InfoDialog
@@ -139,6 +122,97 @@ Maui.ApplicationWindow
         }
     }
 
+    Shortcut
+    {
+        sequence: "Ctrl+O"
+        context: Qt.WindowShortcut
+        onActivated: openFileDialog()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+Shift+R"
+        context: Qt.WindowShortcut
+        onActivated: openRecentFilesDialog()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+N"
+        context: Qt.WindowShortcut
+        onActivated: openTab()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+S"
+        context: Qt.WindowShortcut
+        enabled: !!currentEditor
+        onActivated: saveCurrentFile()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+Shift+S"
+        context: Qt.WindowShortcut
+        enabled: !!currentEditor
+        onActivated: saveCurrentFileAs()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+R"
+        context: Qt.WindowShortcut
+        enabled: !!currentEditor
+        onActivated: toggleFindBar()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+L"
+        context: Qt.WindowShortcut
+        enabled: !!currentEditor
+        onActivated: editorView.openGoToLineDialog()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+J"
+        context: Qt.WindowShortcut
+        enabled: !!currentEditor
+        onActivated: settings.showWordCount = !settings.showWordCount
+    }
+
+    Shortcut
+    {
+        sequence: "F3"
+        context: Qt.WindowShortcut
+        enabled: !!currentTab
+        onActivated: editorView.toggleSplitView()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+/"
+        context: Qt.WindowShortcut
+        onActivated: openShortcutsDialog()
+    }
+
+    Shortcut
+    {
+        sequence: "Ctrl+,"
+        context: Qt.WindowShortcut
+        onActivated: openSettingsDialog()
+    }
+
+    Shortcut
+    {
+        sequence: "Escape"
+        context: Qt.WindowShortcut
+        enabled: _stackView.depth > 1
+        onActivated: _stackView.pop()
+    }
+
     Component
     {
         id: _fileDialogComponent
@@ -169,9 +243,6 @@ Maui.ApplicationWindow
         id: _stackView
         anchors.fill: parent
 
-        Keys.enabled: true
-        Keys.onEscapePressed: _stackView.pop()
-
         initialItem: Maui.SideBarView
         {
             id: _sideBarView
@@ -198,6 +269,8 @@ Maui.ApplicationWindow
         }
     }
 
+    Component.onCompleted: Qt.callLater(restoreStartupSession)
+
     Component
     {
         id: historyViewComponent
@@ -215,8 +288,12 @@ Maui.ApplicationWindow
 
     function openFileDialog()
     {
+        const editorUrl = currentEditor ? String(root.currentEditor.fileUrl) : ""
+        const currentPath = editorUrl.length > 0 && FB.FM.fileExists(editorUrl)
+                ? FB.FM.fileDir(editorUrl)
+                : FB.FM.homePath()
         var props = ({'mode' : FB.FileDialog.Modes.Open,
-                         'currentPath' : FB.FM.fileDir(root.currentEditor.fileUrl),
+                         'currentPath' : currentPath,
                          'callback' : (urls) =>
                                       {
                              console.log("ASKIGN TO OPEN URLS", urls)
@@ -246,6 +323,52 @@ Maui.ApplicationWindow
         console.log("RAISE WINDOW FORM QML")
         root.raise()
         //        root.requ
+    }
+
+    function openSettingsDialog()
+    {
+        const dialog = _settingsDialogComponent.createObject(root)
+        dialog.open()
+    }
+
+    function openShortcutsDialog()
+    {
+        const dialog = _shortcutsDialogComponent.createObject(root)
+        dialog.open()
+    }
+
+    function openRecentFilesDialog()
+    {
+        _stackView.push(historyViewComponent)
+    }
+
+    function saveCurrentFile()
+    {
+        if(currentEditor)
+            editorView.saveFile(currentEditor.fileUrl, currentEditor)
+    }
+
+    function saveCurrentFileAs()
+    {
+        if(currentEditor)
+            editorView.saveFile("", currentEditor)
+    }
+
+    function toggleFindBar()
+    {
+        if(currentEditor)
+            currentEditor.showFindBar = !currentEditor.showFindBar
+    }
+
+    function restoreStartupSession()
+    {
+        if(editorView.count > 0)
+            return
+
+        if(settings.restoreSession && editorView.restoreSession())
+            return
+
+        openTab()
     }
 
     function openFile(url : string)

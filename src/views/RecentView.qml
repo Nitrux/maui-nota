@@ -5,7 +5,6 @@ import QtQuick.Layouts
 import org.mauikit.controls as Maui
 import org.mauikit.filebrowsing as FB
 
-import org.maui.nota as Nota
 import "widgets"
 
 DocsBrowser
