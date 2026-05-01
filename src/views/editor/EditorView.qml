@@ -13,7 +13,7 @@ Pane
     readonly property alias count: _tabView.count
 
     readonly property alias currentTab : _tabView.currentItem
-    readonly property TE.TextEditor currentEditor: currentTab ? currentTab.currentItem.editor : null
+    readonly property TE.CodeEditor currentEditor: currentTab ? currentTab.currentItem.editor : null
 
     readonly property alias listView: _tabView
     readonly property alias model : _tabView.contentModel

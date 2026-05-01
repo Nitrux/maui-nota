@@ -21,7 +21,7 @@ Maui.SplitViewItem
     Maui.Controls.badgeText: editor.document.modified ? "*" : ""
     clip: false
 
-    TE.TextEditor
+    TE.CodeEditor
     {
         id: _editor
         anchors.fill: parent
