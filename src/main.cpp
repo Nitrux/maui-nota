@@ -1,4 +1,5 @@
 #include <QCommandLineParser>
+#include <QDate>
 #include <QIcon>
 #include <QApplication>
 #include <QQmlApplicationEngine>
@@ -34,19 +35,20 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("nota");
 
     KAboutData about(QStringLiteral("nota"),
-                     QStringLiteral("Nota"),
+                     i18n("Nota"),
                      NOTA_VERSION_STRING,
                      i18n("Browse, create and edit text files."),
                      KAboutLicense::LGPL_V3,
-                     APP_COPYRIGHT_NOTICE,
+                     i18n("© %1 Made by Nitrux | Built with MauiKit", QString::number(QDate::currentDate().year())),
                      QString(GIT_BRANCH) + "/" + QString(GIT_COMMIT_HASH));
 
     about.addAuthor(QStringLiteral("Camilo Higuita"), i18n("Developer"), QStringLiteral("milo.h@aol.com"));
     about.addAuthor(QStringLiteral("Anupam Basak"), i18n("Developer"), QStringLiteral("anupam.basak27@gmail.com"));
-    about.setHomepage("https://mauikit.org");
-    about.setProductName("maui/nota");
-    about.setBugAddress("https://invent.kde.org/maui/nota/-/issues");
+    about.addAuthor(QStringLiteral("Uri Herrera"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
+    about.setHomepage("https://nxos.org");
+    about.setProductName("nitrux/nota");
     about.setOrganizationDomain(NOTA_URI);
+    about.setDesktopFileName("org.maui.nota");
     about.setProgramLogo(app.windowIcon());
 
     const auto FBData = MauiKitTextEditor::aboutData();
