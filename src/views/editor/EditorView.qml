@@ -166,56 +166,69 @@ Pane
                         MenuSeparator
                         {
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: findAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: goToLineAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: toggleSplitViewAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuSeparator
                         {
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: toggleLineNumbersAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: toggleWrapTextAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: toggleDocumentStatsAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
                         MenuItem
                         {
                             action: toggleLanguageSelectorAction
                             visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
                         }
 
-                        MenuSeparator {}
+                        MenuSeparator
+                        {
+                            visible: !!currentEditor
+                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+                        }
 
                         MenuItem
                         {
