@@ -21,6 +21,17 @@ Maui.SplitViewItem
     Maui.Controls.badgeText: editor.document.modified ? "*" : ""
     clip: true
 
+    onActiveFocusChanged:
+    {
+        if(root.debugTabTitles)
+        {
+            console.log("[nota-debug-tab] split item focus changed",
+                        "activeFocus=", activeFocus,
+                        "title=", String(title),
+                        "file=", String(fileUrl))
+        }
+    }
+
     TE.CodeEditor
     {
         id: _editor
@@ -61,7 +72,30 @@ Maui.SplitViewItem
                 editorView.persistSession()
             }
         }
-        onTitleChanged: _languageSelector.syncCurrentIndex()
+        onTitleChanged:
+        {
+            if(root.debugTabTitles)
+            {
+                console.log("[nota-debug-tab] code editor title changed",
+                            "title=", String(_editor.title),
+                            "file=", String(_editor.fileUrl),
+                            "splitIndex=", String(control.SplitView.splitIndex))
+            }
+
+            _languageSelector.syncCurrentIndex()
+        }
+
+        onActiveFocusChanged:
+        {
+            if(root.debugTabTitles)
+            {
+                console.log("[nota-debug-tab] code editor focus changed",
+                            "activeFocus=", activeFocus,
+                            "title=", String(_editor.title),
+                            "file=", String(_editor.fileUrl),
+                            "splitIndex=", String(control.SplitView.splitIndex))
+            }
+        }
 
         Loader
         {

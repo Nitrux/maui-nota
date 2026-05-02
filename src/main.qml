@@ -24,6 +24,7 @@ Maui.ApplicationWindow
     readonly property alias currentTab : editorView.currentTab
     readonly property alias currentEditor: editorView.currentEditor
     property bool debugSidebarFlow: true
+    property bool debugTabTitles: true
 
     readonly property font defaultFont : Maui.Style.monospacedFont
     readonly property alias appSettings: settings
@@ -58,6 +59,18 @@ Maui.ApplicationWindow
         }
 
         syncSidebar(currentEditor ? currentEditor.fileUrl : "")
+    }
+
+    onTitleChanged:
+    {
+        if(debugTabTitles)
+        {
+            console.log("[nota-debug-tab] window title changed",
+                        "windowTitle=", String(title),
+                        "tabTitle=", String(currentTab ? currentTab.title : ""),
+                        "editorTitle=", String(currentEditor ? currentEditor.title : ""),
+                        "editorFile=", String(currentEditor ? currentEditor.fileUrl : ""))
+        }
     }
 
     onClosing: (close) =>

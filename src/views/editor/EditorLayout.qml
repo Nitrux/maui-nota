@@ -21,9 +21,12 @@ Item
     readonly property alias count : _splitView.count
     readonly property alias currentItem : _splitView.currentItem
     readonly property alias model : _splitView.contentModel
-    readonly property string title : count === 2 ? splitTitleAt(0) + "  -  " + splitTitleAt(1) : splitTitleAt(currentIndex)
+    readonly property string title : splitTitleAt(currentIndex)
 
     readonly property alias editor : _splitView.currentItem
+
+    onTitleChanged: logSplitState("layout title changed")
+    onCurrentItemChanged: logSplitState("layout current item changed")
 
     Maui.SplitView
     {
@@ -34,7 +37,11 @@ Item
         background: null
         clip: true
 
-        onCurrentIndexChanged: editorView.persistSession()
+        onCurrentIndexChanged:
+        {
+            editorView.persistSession()
+            logSplitState("split current index changed")
+        }
         Component.onCompleted: restoreSplits()
     }
 
@@ -150,5 +157,29 @@ Item
     {
         const item = _splitView.itemAt(index)
         return item ? String(item.title) : ""
+    }
+
+    function splitFileAt(index)
+    {
+        const item = _splitView.itemAt(index)
+        return item ? String(item.fileUrl) : ""
+    }
+
+    function logSplitState(reason)
+    {
+        if(!root.debugTabTitles)
+            return
+
+        console.log("[nota-debug-tab] editor layout",
+                    "reason=", reason,
+                    "layoutTitle=", String(title),
+                    "count=", count,
+                    "currentIndex=", currentIndex,
+                    "currentItemTitle=", String(currentItem ? currentItem.title : ""),
+                    "currentItemFile=", String(currentItem ? currentItem.fileUrl : ""),
+                    "split0Title=", splitTitleAt(0),
+                    "split0File=", splitFileAt(0),
+                    "split1Title=", splitTitleAt(1),
+                    "split1File=", splitFileAt(1))
     }
 }
