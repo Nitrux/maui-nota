@@ -19,7 +19,7 @@ Maui.SplitViewItem
 
     Maui.Controls.title : title
     Maui.Controls.badgeText: editor.document.modified ? "*" : ""
-    clip: false
+    clip: true
 
     TE.CodeEditor
     {
@@ -46,6 +46,13 @@ Maui.SplitViewItem
 
         onFileUrlChanged:
         {
+            if(root.debugSidebarFlow)
+            {
+                console.log("[nota-debug] editor fileUrl changed",
+                            "file=", String(_editor.fileUrl),
+                            "title=", String(_editor.title))
+            }
+
             _languageSelector.syncCurrentIndex()
 
             if(String(_editor.fileUrl).length > 0)

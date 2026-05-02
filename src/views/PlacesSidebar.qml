@@ -23,9 +23,44 @@ Loader
     sourceComponent: Maui.Page
     {
         property alias browser : browserView
+
+        function isNamedPlace(place)
+        {
+            return !!place && String(place.label).length > 0
+        }
+
+        function openFileFromSidebar(path)
+        {
+            const filePath = String(path)
+
+            if(root.debugSidebarFlow)
+            {
+                console.log("[nota-debug] sidebar open file request",
+                            "file=", filePath,
+                            "browserDir=", String(browserView.currentPath))
+            }
+
+            Qt.callLater(() =>
+            {
+                if(root.debugSidebarFlow)
+                {
+                    console.log("[nota-debug] sidebar open file dispatch", filePath)
+                }
+
+                editorView.openTab(filePath)
+
+                if(_sideBarView.sideBar.collapsed)
+                    _sideBarView.sideBar.close()
+            })
+        }
+
         clip: true
         Maui.Theme.colorSet: Maui.Theme.Window
-        background: null
+        background: Rectangle
+        {
+            color: Maui.Theme.backgroundColor
+            radius: Maui.Style.radiusV
+        }
 
         footerMargins: Maui.Style.defaultPadding
         footBar.middleContent: ComboBox
@@ -40,10 +75,29 @@ Loader
             }
 
             textRole: "label"
+            delegate: ItemDelegate
+            {
+                required property string label
+                required property string path
+
+                width: parent ? parent.width : implicitWidth
+                visible: label.length > 0
+                height: visible ? implicitHeight : 0
+                text: label
+            }
             onActivated:
             {
+                const place = model.get(index)
+                if(!isNamedPlace(place))
+                    return
+
+                if(root.debugSidebarFlow)
+                {
+                    console.log("[nota-debug] sidebar place activated", String(place.path), String(place.label))
+                }
+
                 currentIndex = index
-                browserView.openFolder(model.get(index).path)
+                browserView.openFolder(place.path)
             }
         }
         headerMargins: Maui.Style.defaultPadding
@@ -73,7 +127,7 @@ Loader
             {
                 text: i18n("Next")
                 icon.name: "go-next"
-                onTriggered: browserView.goNext()
+                onTriggered: browserView.goForward()
             }
         }
 
@@ -175,12 +229,37 @@ Loader
             headBar.rightLayout.width: 0
             floatingFooter: false
             listItemSize: 22
-            background: null
-            browser.background: null
+            clip: true
+            background: Rectangle
+            {
+                color: Maui.Theme.backgroundColor
+                radius: Maui.Style.radiusV
+            }
+            browser.background: Rectangle
+            {
+                color: Maui.Theme.backgroundColor
+                radius: Maui.Style.radiusV
+            }
+
+            onCurrentPathChanged:
+            {
+                if(root.debugSidebarFlow)
+                {
+                    console.log("[nota-debug] sidebar current path changed", String(currentPath))
+                }
+            }
 
             onItemClicked: (index) =>
                            {
                                const item = currentFMModel.get(index)
+                               if(root.debugSidebarFlow)
+                               {
+                                   console.log("[nota-debug] sidebar item clicked",
+                                               "path=", String(item.path),
+                                               "dir=", String(item.isdir),
+                                               "browserDir=", String(currentPath))
+                               }
+
                                if(Maui.Handy.singleClick)
                                {
                                    if(item.isdir == "true")
@@ -188,9 +267,7 @@ Loader
                                        openFolder(item.path)
                                    }else
                                    {
-                                       editorView.openTab(item.path)
-                                       if(_sideBarView.sideBar.collapsed)
-                                       _sideBarView.sideBar.close()
+                                       openFileFromSidebar(item.path)
                                    }
                                }
                            }
@@ -198,6 +275,14 @@ Loader
             onItemDoubleClicked: (index) =>
                                  {
                                      const item = currentFMModel.get(index)
+                                     if(root.debugSidebarFlow)
+                                     {
+                                         console.log("[nota-debug] sidebar item double clicked",
+                                                     "path=", String(item.path),
+                                                     "dir=", String(item.isdir),
+                                                     "browserDir=", String(currentPath))
+                                     }
+
                                      if(!Maui.Handy.singleClick)
                                      {
                                          if(item.isdir == "true")
@@ -205,7 +290,7 @@ Loader
                                              openFolder(item.path)
                                          }else
                                          {
-                                             editorView.openTab(item.path)
+                                             openFileFromSidebar(item.path)
                                          }
                                      }
                                  }

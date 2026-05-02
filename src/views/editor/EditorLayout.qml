@@ -6,6 +6,7 @@ import org.mauikit.controls as Maui
 Item
 {
     id: control
+    clip: true
 
     Maui.Controls.title: title
     Maui.Controls.toolTipText:  currentItem.fileUrl
@@ -20,7 +21,7 @@ Item
     readonly property alias count : _splitView.count
     readonly property alias currentItem : _splitView.currentItem
     readonly property alias model : _splitView.contentModel
-    readonly property string title : count === 2 ?  model.get(0).title + "  -  " + model.get(1).title : currentItem.title
+    readonly property string title : count === 2 ? splitTitleAt(0) + "  -  " + splitTitleAt(1) : splitTitleAt(currentIndex)
 
     readonly property alias editor : _splitView.currentItem
 
@@ -31,7 +32,7 @@ Item
         anchors.fill: parent
         orientation : width >= 600 ? Qt.Horizontal : Qt.Vertical
         background: null
-        clip: false
+        clip: true
 
         onCurrentIndexChanged: editorView.persistSession()
         Component.onCompleted: restoreSplits()
@@ -143,5 +144,11 @@ Item
 
         state.currentIndex = Math.min(state.currentIndex, state.paths.length - 1)
         return state
+    }
+
+    function splitTitleAt(index)
+    {
+        const item = _splitView.itemAt(index)
+        return item ? String(item.title) : ""
     }
 }

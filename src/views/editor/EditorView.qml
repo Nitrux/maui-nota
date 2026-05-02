@@ -26,12 +26,15 @@ Pane
 
     contentItem: Item
     {
+        clip: true
+
         Maui.TabView
         {
             id: _tabView
 
             anchors.fill: parent
             anchors.bottomMargin: _bottomToolBar.visible ? _bottomToolBar.height + _bottomToolBar.anchors.bottomMargin : 0
+            clip: true
 
             Maui.Controls.showCSD: true
 
@@ -346,28 +349,7 @@ Pane
 
             MenuItem
             {
-                action: toggleLineNumbersAction
-                visible: !!currentEditor
-                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-            }
-
-            MenuItem
-            {
-                action: toggleWrapTextAction
-                visible: !!currentEditor
-                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-            }
-
-            MenuItem
-            {
                 action: toggleDocumentStatsAction
-                visible: !!currentEditor
-                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-            }
-
-            MenuItem
-            {
-                action: toggleLanguageSelectorAction
                 visible: !!currentEditor
                 height: visible ? implicitHeight : -Maui.Style.defaultSpacing
             }
@@ -510,26 +492,6 @@ Pane
         onTriggered: toggleSplitView()
     }
 
-    readonly property Action toggleLineNumbersAction: Action
-    {
-        text: i18n("Line Numbers")
-        icon.name: "format-list-ordered"
-        enabled: !!currentEditor
-        checkable: true
-        checked: settings.showLineNumbers
-        onTriggered: settings.showLineNumbers = !settings.showLineNumbers
-    }
-
-    readonly property Action toggleWrapTextAction: Action
-    {
-        text: i18n("Wrap Text")
-        icon.name: "format-text-direction-horizontal"
-        enabled: !!currentEditor
-        checkable: true
-        checked: settings.wrapText
-        onTriggered: settings.wrapText = !settings.wrapText
-    }
-
     readonly property Action toggleDocumentStatsAction: Action
     {
         text: i18n("Document Stats")
@@ -538,16 +500,6 @@ Pane
         checkable: true
         checked: settings.showWordCount
         onTriggered: settings.showWordCount = !settings.showWordCount
-    }
-
-    readonly property Action toggleLanguageSelectorAction: Action
-    {
-        text: i18n("Language Selector")
-        icon.name: "code-context"
-        enabled: !!currentEditor
-        checkable: true
-        checked: settings.showSyntaxHighlightingLanguages
-        onTriggered: settings.showSyntaxHighlightingLanguages = !settings.showSyntaxHighlightingLanguages
     }
 
     function unsavedTabSplits(index) //which split indexes are unsaved
@@ -595,10 +547,26 @@ Pane
     {
         options = options || {}
 
+        if(root.debugSidebarFlow)
+        {
+            console.log("[nota-debug] openTab request",
+                        "path=", String(path),
+                        "keepRecentView=", !!options.keepRecentView,
+                        "skipHistory=", !!options.skipHistory,
+                        "skipPersist=", !!options.skipPersist,
+                        "currentTabCount=", count,
+                        "stackDepth=", _stackView.depth)
+        }
+
         const index = fileIndex(path)
 
         if(index[0] >= 0)
         {
+            if(root.debugSidebarFlow)
+            {
+                console.log("[nota-debug] openTab focusing existing file", String(path), "tab=", index[0], "split=", index[1])
+            }
+
             _tabView.currentIndex = index[0]
             currentTab.currentIndex = index[1]
             persistSession()
@@ -607,6 +575,11 @@ Pane
 
         if(shouldReuseCurrentScratchTab(path))
         {
+            if(root.debugSidebarFlow)
+            {
+                console.log("[nota-debug] openTab reusing scratch tab", String(path))
+            }
+
             currentEditor.fileUrl = path
             currentEditor.forceActiveFocus()
 
@@ -619,6 +592,10 @@ Pane
         }
 
         const tabProps = options.tabProps || {"path": path}
+        if(root.debugSidebarFlow)
+        {
+            console.log("[nota-debug] openTab creating tab", JSON.stringify(tabProps))
+        }
         _tabView.addTab(_editorLayoutComponent, tabProps)
 
         if(path && !options.skipHistory)

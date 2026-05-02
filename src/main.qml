@@ -23,6 +23,7 @@ Maui.ApplicationWindow
 
     readonly property alias currentTab : editorView.currentTab
     readonly property alias currentEditor: editorView.currentEditor
+    property bool debugSidebarFlow: true
 
     readonly property font defaultFont : Maui.Style.monospacedFont
     readonly property alias appSettings: settings
@@ -49,7 +50,15 @@ Maui.ApplicationWindow
         property string sessionState: ""
     }
 
-    onCurrentEditorChanged: syncSidebar(currentEditor ? currentEditor.fileUrl : "")
+    onCurrentEditorChanged:
+    {
+        if(debugSidebarFlow)
+        {
+            console.log("[nota-debug] current editor changed", String(currentEditor ? currentEditor.fileUrl : ""))
+        }
+
+        syncSidebar(currentEditor ? currentEditor.fileUrl : "")
+    }
 
     onClosing: (close) =>
                {
@@ -285,10 +294,16 @@ Maui.ApplicationWindow
                 anchors.margins: Maui.Style.contentMargins
             }
 
-            EditorView
+            Item
             {
-                id: editorView
                 anchors.fill: parent
+                clip: true
+
+                EditorView
+                {
+                    id: editorView
+                    anchors.fill: parent
+                }
             }
         }
     }
@@ -306,7 +321,28 @@ Maui.ApplicationWindow
     {
         if(path && FB.FM.fileExists(path) && settings.enableSidebar)
         {
-            _drawer.page.browser.openFolder(FB.FM.fileDir(path))
+            const targetDir = String(FB.FM.fileDir(path))
+            const currentSidebarDir = _drawer.page && _drawer.page.browser
+                    ? String(FB.FM.fileDir(_drawer.page.browser.currentPath))
+                    : ""
+
+            if(debugSidebarFlow)
+            {
+                console.log("[nota-debug] syncSidebar",
+                            "file=", String(path),
+                            "targetDir=", targetDir,
+                            "sidebarDir=", currentSidebarDir)
+            }
+
+            if(_drawer.page && _drawer.page.browser && currentSidebarDir !== targetDir)
+            {
+                if(debugSidebarFlow)
+                {
+                    console.log("[nota-debug] syncSidebar opening folder", targetDir)
+                }
+
+                _drawer.page.browser.openFolder(targetDir)
+            }
         }
     }
 
@@ -395,11 +431,21 @@ Maui.ApplicationWindow
 
     function openFile(url : string)
     {
+        if(debugSidebarFlow)
+        {
+            console.log("[nota-debug] root openFile", String(url))
+        }
+
         editorView.openTab(url)
     }
 
     function openFiles(urls : variant)
     {
+        if(debugSidebarFlow)
+        {
+            console.log("[nota-debug] root openFiles", JSON.stringify(urls))
+        }
+
         for(var url of urls)
         {
             root.openFile(url)
