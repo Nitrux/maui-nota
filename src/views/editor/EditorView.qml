@@ -18,6 +18,7 @@ Pane
     readonly property alias listView: _tabView
     readonly property alias model : _tabView.contentModel
     readonly property alias tabView : _tabView
+    readonly property bool compactToolbarLayout: !root.isWide
     property bool restoringSession: false
 
     padding: 0
@@ -30,10 +31,11 @@ Pane
             id: _tabView
 
             anchors.fill: parent
+            anchors.bottomMargin: _bottomToolBar.visible ? _bottomToolBar.height + _bottomToolBar.anchors.bottomMargin : 0
 
             Maui.Controls.showCSD: true
 
-            altTabBar: !root.isWide
+            altTabBar: false
             tabBarMargins: Maui.Style.contentMargins
 
             background: null
@@ -58,7 +60,7 @@ Pane
             tabBar.leftContent: [
                 Loader
                 {
-                    active: settings.enableSidebar
+                    active: settings.enableSidebar && !compactToolbarLayout
                     visible: active
                     asynchronous: true
 
@@ -82,17 +84,19 @@ Pane
                 {
                     action: newFileAction
                     display: ToolButton.IconOnly
+                    visible: !compactToolbarLayout
                 },
 
                 ToolButton
                 {
                     action: openFileAction
                     display: ToolButton.IconOnly
+                    visible: !compactToolbarLayout
                 },
 
                 ToolSeparator
                 {
-                    visible: !!currentEditor
+                    visible: !compactToolbarLayout && !!currentEditor
                     bottomPadding: 10
                     topPadding: 10
                 },
@@ -101,156 +105,68 @@ Pane
                 {
                     action: undoAction
                     display: ToolButton.IconOnly
-                    visible: !!currentEditor
+                    visible: !compactToolbarLayout && !!currentEditor
                 },
 
                 ToolButton
                 {
                     action: redoAction
                     display: ToolButton.IconOnly
-                    visible: !!currentEditor
+                    visible: !compactToolbarLayout && !!currentEditor
                 },
 
                 ToolButton
                 {
                     action: saveAction
                     display: ToolButton.IconOnly
-                    visible: !!currentEditor
+                    visible: !compactToolbarLayout && !!currentEditor
                 },
 
                 ToolButton
                 {
                     action: saveAsAction
                     display: ToolButton.IconOnly
-                    visible: !!currentEditor
+                    visible: !compactToolbarLayout && !!currentEditor
                 },
 
                 ToolSeparator
                 {
-                    visible: !!currentEditor
-                    bottomPadding: 10
-                    topPadding: 10
-                },
-
-                ToolButton
-                {
-                    text: _tabView.count
-                    visible: _tabView.count > 1
-                    font.bold: true
-                    font.pointSize: Maui.Style.fontSizes.small
-                    onClicked: _tabView.openOverview()
-                    background: Rectangle
-                    {
-                        color: Maui.Theme.alternateBackgroundColor
-                        radius: Maui.Style.radiusV
-                    }
-                }
-            ]
-
-            tabBar.rightContent: [
-                ToolSeparator
-                {
+                    visible: !compactToolbarLayout && !!currentEditor
                     bottomPadding: 10
                     topPadding: 10
                 },
 
                 Loader
                 {
+                    active: !compactToolbarLayout && _tabView.count > 1
+                    visible: active
                     asynchronous: true
-                    sourceComponent: Maui.ToolButtonMenu
-                    {
-                        icon.name: "overflow-menu"
+                    sourceComponent: _tabsCounterButtonComponent
+                }
+            ]
 
-                        MenuItem { action: openRecentFileAction }
+            tabBar.rightContent: [
+                ToolSeparator
+                {
+                    visible: !compactToolbarLayout
+                    bottomPadding: 10
+                    topPadding: 10
+                },
 
-                        MenuSeparator
-                        {
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
+                Loader
+                {
+                    active: compactToolbarLayout && _tabView.count > 1
+                    visible: active
+                    asynchronous: true
+                    sourceComponent: _tabsCounterButtonComponent
+                },
 
-                        MenuItem
-                        {
-                            action: findAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: goToLineAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: toggleSplitViewAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuSeparator
-                        {
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: toggleLineNumbersAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: toggleWrapTextAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: toggleDocumentStatsAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            action: toggleLanguageSelectorAction
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuSeparator
-                        {
-                            visible: !!currentEditor
-                            height: visible ? implicitHeight : -Maui.Style.defaultSpacing
-                        }
-
-                        MenuItem
-                        {
-                            text: i18n("Shortcuts")
-                            icon.name: "configure-shortcuts"
-                            onTriggered: openShortcutsDialog()
-                        }
-
-                        MenuItem
-                        {
-                            text: i18n("Settings")
-                            icon.name: "settings-configure"
-                            onTriggered: openSettingsDialog()
-                        }
-
-                        MenuItem
-                        {
-                            text: i18n("About")
-                            icon.name: "documentinfo"
-                            onTriggered: Maui.App.aboutDialog()
-                        }
-                    }
+                Loader
+                {
+                    active: !compactToolbarLayout
+                    visible: active
+                    asynchronous: true
+                    sourceComponent: _overflowMenuButtonComponent
                 }
             ]
 
@@ -282,6 +198,206 @@ Pane
             emoji: "document-new"
             title: i18n("Start Writing")
             body: i18n("Create or open a text file.")
+        }
+
+        Maui.ToolBar
+        {
+            id: _bottomToolBar
+            z: 2
+            anchors.left: parent.left
+            anchors.right: parent.right
+            anchors.bottom: parent.bottom
+            anchors.leftMargin: Maui.Style.contentMargins
+            anchors.rightMargin: Maui.Style.contentMargins
+            anchors.bottomMargin: Maui.Style.contentMargins
+            visible: compactToolbarLayout
+            position: ToolBar.Footer
+            forceCenterMiddleContent: false
+            background: Rectangle
+            {
+                color: Maui.Theme.backgroundColor
+                radius: Maui.Style.radiusV
+                border.color: Maui.Theme.alternateBackgroundColor
+            }
+
+            leftContent: [
+                ToolButton
+                {
+                    action: newFileAction
+                    display: ToolButton.IconOnly
+                },
+
+                ToolButton
+                {
+                    action: openFileAction
+                    display: ToolButton.IconOnly
+                },
+
+                ToolButton
+                {
+                    action: saveAction
+                    display: ToolButton.IconOnly
+                    visible: !!currentEditor
+                },
+
+                ToolButton
+                {
+                    action: saveAsAction
+                    display: ToolButton.IconOnly
+                    visible: !!currentEditor
+                }
+            ]
+
+            rightContent: Loader
+            {
+                asynchronous: true
+                sourceComponent: _overflowMenuButtonComponent
+            }
+        }
+    }
+
+    Component
+    {
+        id: _tabsCounterButtonComponent
+
+        ToolButton
+        {
+            text: _tabView.count
+            font.bold: true
+            font.pointSize: Maui.Style.fontSizes.small
+            onClicked: _tabView.openOverview()
+            background: Rectangle
+            {
+                color: Maui.Theme.alternateBackgroundColor
+                radius: Maui.Style.radiusV
+            }
+        }
+    }
+
+    Component
+    {
+        id: _overflowMenuButtonComponent
+
+        Maui.ToolButtonMenu
+        {
+            icon.name: "overflow-menu"
+
+            MenuItem { action: openRecentFileAction }
+
+            MenuItem
+            {
+                action: toggleSidebarAction
+                visible: compactToolbarLayout && settings.enableSidebar
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuSeparator
+            {
+                visible: compactToolbarLayout && !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: undoAction
+                visible: compactToolbarLayout && !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: redoAction
+                visible: compactToolbarLayout && !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuSeparator
+            {
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: findAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: goToLineAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: toggleSplitViewAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuSeparator
+            {
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: toggleLineNumbersAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: toggleWrapTextAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: toggleDocumentStatsAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                action: toggleLanguageSelectorAction
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuSeparator
+            {
+                visible: !!currentEditor
+                height: visible ? implicitHeight : -Maui.Style.defaultSpacing
+            }
+
+            MenuItem
+            {
+                text: i18n("Shortcuts")
+                icon.name: "configure-shortcuts"
+                onTriggered: openShortcutsDialog()
+            }
+
+            MenuItem
+            {
+                text: i18n("Settings")
+                icon.name: "settings-configure"
+                onTriggered: openSettingsDialog()
+            }
+
+            MenuItem
+            {
+                text: i18n("About")
+                icon.name: "documentinfo"
+                onTriggered: Maui.App.aboutDialog()
+            }
         }
     }
 
@@ -324,6 +440,16 @@ Pane
         icon.name: "document-new"
         text: i18n("New")
         onTriggered: editorView.openTab("")
+    }
+
+    readonly property Action toggleSidebarAction: Action
+    {
+        icon.name: _sideBarView.sideBar.visible ? "sidebar-collapse" : "sidebar-expand"
+        text: _sideBarView.sideBar.visible ? i18n("Hide Side Bar") : i18n("Show Side Bar")
+        enabled: settings.enableSidebar
+        checkable: true
+        checked: _sideBarView.sideBar.visible
+        onTriggered: _sideBarView.sideBar.toggle()
     }
 
     readonly property Action undoAction: Action
