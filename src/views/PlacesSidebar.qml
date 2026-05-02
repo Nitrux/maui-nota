@@ -23,6 +23,7 @@ Loader
     sourceComponent: Maui.Page
     {
         property alias browser : browserView
+        property int contextMenuIndex: -1
 
         function isNamedPlace(place)
         {
@@ -52,6 +53,41 @@ Loader
                 if(_sideBarView.sideBar.collapsed)
                     _sideBarView.sideBar.close()
             })
+        }
+
+        function currentContextItem()
+        {
+            if(contextMenuIndex < 0 || !browserView.currentFMModel || contextMenuIndex >= browserView.currentFMModel.count)
+                return null
+
+            return browserView.currentFMModel.get(contextMenuIndex)
+        }
+
+        function contextItemPath()
+        {
+            const item = currentContextItem()
+            return item ? String(item.path) : ""
+        }
+
+        function contextItemIsDir()
+        {
+            const item = currentContextItem()
+            return item ? item.isdir == "true" : false
+        }
+
+        function openContextItem()
+        {
+            const item = currentContextItem()
+            if(!item)
+                return
+
+            if(item.isdir == "true")
+            {
+                browserView.openFolder(item.path)
+            } else
+            {
+                openFileFromSidebar(item.path)
+            }
         }
 
         clip: true
@@ -294,6 +330,67 @@ Loader
                                          }
                                      }
                                  }
+
+            onItemRightClicked: (index) =>
+                                {
+                                    const item = currentFMModel.get(index)
+
+                                    if(root.debugSidebarFlow)
+                                    {
+                                        console.log("[nota-debug] sidebar item right clicked",
+                                                    "path=", String(item.path),
+                                                    "dir=", String(item.isdir),
+                                                    "browserDir=", String(currentPath))
+                                    }
+
+                                    contextMenuIndex = index
+                                    _itemContextMenu.show()
+                                }
+        }
+
+        Maui.ContextualMenu
+        {
+            id: _itemContextMenu
+
+            MenuItem
+            {
+                text: contextItemIsDir() ? i18n("Open Folder") : i18n("Open")
+                icon.name: contextItemIsDir() ? "folder-open" : "document-open"
+                enabled: !!currentContextItem()
+                onTriggered: openContextItem()
+            }
+
+            MenuItem
+            {
+                text: i18n("Open in New Split")
+                icon.name: "view-split-left-right"
+                enabled: !!currentContextItem() && !contextItemIsDir() && currentTab.count <= 1 && settings.supportSplit
+                visible: !contextItemIsDir()
+                height: visible ? implicitHeight : 0
+                onTriggered: currentTab.split(contextItemPath())
+            }
+
+            MenuSeparator
+            {
+                visible: !!currentContextItem()
+                height: visible ? implicitHeight : 0
+            }
+
+            MenuItem
+            {
+                text: i18n("Show in Folder")
+                icon.name: "folder-open"
+                enabled: !!currentContextItem() && !Maui.Handy.isAndroid
+                onTriggered: FB.FM.openLocation([contextItemPath()])
+            }
+
+            MenuItem
+            {
+                text: i18n("Copy Location")
+                icon.name: "edit-copy"
+                enabled: !!currentContextItem()
+                onTriggered: Maui.Handy.copyToClipboard({"urls": [contextItemPath()]}, false)
+            }
         }
     }
 }
