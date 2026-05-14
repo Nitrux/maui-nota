@@ -145,6 +145,13 @@ Pane
                     visible: active
                     asynchronous: true
                     sourceComponent: _tabsCounterButtonComponent
+                },
+
+                ToolSeparator
+                {
+                    visible: !compactToolbarLayout && _tabView.count > 1
+                    topPadding: 10
+                    bottomPadding: 10
                 }
             ]
 
@@ -162,6 +169,13 @@ Pane
                     visible: active
                     asynchronous: true
                     sourceComponent: _tabsCounterButtonComponent
+                },
+
+                ToolSeparator
+                {
+                    visible: compactToolbarLayout && _tabView.count > 1
+                    topPadding: 10
+                    bottomPadding: 10
                 },
 
                 Loader
