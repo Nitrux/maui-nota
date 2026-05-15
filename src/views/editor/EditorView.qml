@@ -83,6 +83,13 @@ Pane
                     }
                 },
 
+                ToolSeparator
+                {
+                    visible: settings.enableSidebar && !compactToolbarLayout
+                    topPadding: 10
+                    bottomPadding: 10
+                },
+
                 ToolButton
                 {
                     action: newFileAction
