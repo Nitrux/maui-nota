@@ -40,6 +40,7 @@ Pane
 
             altTabBar: false
             tabBarMargins: Maui.Style.contentMargins
+            showDefaultMenuEntries: false
 
             background: null
 
@@ -194,19 +195,88 @@ Pane
                 }
             ]
 
-            tabViewButton: Maui.TabViewButton
+            tabViewButton: Maui.TabButton
             {
                 id:  _tabButton
-                tabView: _tabView
+                property Item tabView: _tabView
+                readonly property int mindex: _tabButton.TabBar.index
+                readonly property var _tabMenuActions:
+                {
+                    const actions = []
+                    if (_tabButton.mindex > 0)
+                        actions.push(_moveTabLeftAction)
+                    if (_tabButton.mindex >= 0 && _tabButton.mindex < (_tabButton.tabView.count - 1))
+                        actions.push(_moveTabRightAction)
+                    return actions
+                }
+                readonly property var tabInfo:
+                {
+                    const item = tabView && tabView.contentModel && mindex >= 0 ? tabView.contentModel.get(mindex) : null
+                    return item ? item.Maui.Controls : ({})
+                }
+
+                autoExclusive: true
+                width: tabView.mobile ? ListView.view.width : Math.max(160, Math.min(260, implicitWidth))
+                checked: mindex === tabView.currentIndex
+                text: tabInfo.title || ""
+                icon.name: tabInfo.iconName || ""
+                Maui.Controls.badgeText: tabInfo.badgeText
+                Maui.Controls.status: tabInfo.status
+
                 onClicked:
                 {
                     _tabView.setCurrentIndex(_tabButton.mindex)
                     _tabView.currentItem.forceActiveFocus()
                 }
 
+                onRightClicked:
+                {
+                    _tabMenu.show()
+                }
+
                 onCloseClicked:
                 {
                     _tabView.closeTabClicked(_tabButton.mindex)
+                }
+
+                Action
+                {
+                    id: _moveTabLeftAction
+                    text: i18n("Move Left")
+                    icon.name: "go-previous"
+                    onTriggered:
+                    {
+                        const from = _tabButton.mindex
+                        if (from > 0)
+                            _tabView.moveTab(from, from - 1)
+                    }
+                }
+
+                Action
+                {
+                    id: _moveTabRightAction
+                    text: i18n("Move Right")
+                    icon.name: "go-next"
+                    onTriggered:
+                    {
+                        const from = _tabButton.mindex
+                        if (from >= 0 && from < (_tabView.count - 1))
+                            _tabView.moveTab(from, from + 1)
+                    }
+                }
+
+                Maui.ContextualMenu
+                {
+                    id: _tabMenu
+
+                    Repeater
+                    {
+                        model: _tabButton._tabMenuActions
+                        delegate: MenuItem
+                        {
+                            action: modelData
+                        }
+                    }
                 }
             }
 

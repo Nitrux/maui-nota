@@ -23,8 +23,8 @@ Maui.ApplicationWindow
 
     readonly property alias currentTab : editorView.currentTab
     readonly property alias currentEditor: editorView.currentEditor
-    property bool debugSidebarFlow: true
-    property bool debugTabTitles: true
+    property bool debugSidebarFlow: false
+    property bool debugTabTitles: false
 
     readonly property font defaultFont : Maui.Style.monospacedFont
     readonly property alias appSettings: settings
@@ -369,7 +369,10 @@ Maui.ApplicationWindow
                          'currentPath' : currentPath,
                          'callback' : (urls) =>
                                       {
-                             console.log("ASKIGN TO OPEN URLS", urls)
+                             if(debugSidebarFlow)
+                             {
+                                 console.log("[nota-debug] openFileDialog callback urls", JSON.stringify(urls))
+                             }
                              root.openFiles(urls)
                          }})
 
@@ -393,7 +396,10 @@ Maui.ApplicationWindow
 
     function activateWindow()
     {
-        console.log("RAISE WINDOW FORM QML")
+        if(debugSidebarFlow)
+        {
+            console.log("[nota-debug] raise window from qml")
+        }
         root.raise()
         //        root.requ
     }
