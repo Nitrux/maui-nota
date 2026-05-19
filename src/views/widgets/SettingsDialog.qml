@@ -181,20 +181,206 @@ Maui.SettingsDialog
     Component
     {
         id:_stylePageComponent
-        TE.ColorSchemesPage
+        Maui.SettingsPage
         {
+            id: _stylePage
+            title: i18n("Colors")
             enabled: settings.enableSyntaxHighlighting
 
-            currentTheme: appSettings.theme
-            backgroundColor: appSettings.backgroundColor
+            property string currentTheme: appSettings.theme
+            property color backgroundColor: appSettings.backgroundColor
 
-            onColorsPicked: (background, text) =>
-                            {
-                                root.appSettings.backgroundColor = background
-                                root.appSettings.textColor = text
-                            }
+            function contrastTextColor(colorValue)
+            {
+                const luma = (0.299 * colorValue.r) + (0.587 * colorValue.g) + (0.114 * colorValue.b)
+                return luma >= 0.55 ? "#1f2329" : "#f5f7fa"
+            }
+
+            function applyBackgroundColor(colorValue)
+            {
+                const textColor = contrastTextColor(colorValue)
+                backgroundColor = colorValue
+                root.appSettings.backgroundColor = colorValue
+                root.appSettings.textColor = textColor
+            }
 
             onCurrentThemeChanged: appSettings.theme = currentTheme
+
+            Maui.InfoDialog
+            {
+                id: _backgroundColorDialog
+                title: i18n("Select Editor Background")
+                standardButtons: Dialog.Ok | Dialog.Cancel
+                property color pendingColor: _stylePage.backgroundColor
+
+                onOpened:
+                {
+                    pendingColor = _stylePage.backgroundColor
+                    _hexField.text = String(pendingColor)
+                }
+
+                onAccepted:
+                {
+                    _stylePage.applyBackgroundColor(pendingColor)
+                }
+
+                Maui.SectionGroup
+                {
+                    title: i18n("Color")
+                    description: i18n("Choose one of the presets or type a hex color.")
+                    Layout.fillWidth: true
+
+                    Maui.ColorsRow
+                    {
+                        Layout.fillWidth: true
+                        currentColor: _backgroundColorDialog.pendingColor
+                        colors: [
+                            "#1e2030",
+                            "#26283a",
+                            "#2d2f45",
+                            "#333333",
+                            "#f5f5f5",
+                            "#fff3e6",
+                            "#dbe7ff",
+                            "#e9f7ef"
+                        ]
+                        onColorPicked: (color) =>
+                        {
+                            _backgroundColorDialog.pendingColor = color
+                            _hexField.text = String(color)
+                        }
+                    }
+
+                    Maui.FlexSectionItem
+                    {
+                        label1.text: i18n("Hex")
+                        label2.text: i18n("Use #RRGGBB format.")
+
+                        Maui.TextField
+                        {
+                            id: _hexField
+                            Layout.fillWidth: true
+                            placeholderText: "#1e2030"
+                            onTextEdited:
+                            {
+                                const value = text.trim()
+                                if (/^#([0-9a-fA-F]{6})$/.test(value))
+                                    _backgroundColorDialog.pendingColor = value
+                            }
+                        }
+                    }
+                }
+
+            }
+
+            Maui.SectionGroup
+            {
+                title: i18n("Color")
+                description: i18n("Pick a custom editor background color.")
+
+                Maui.FlexSectionItem
+                {
+                    label1.text: i18n("Background")
+                    label2.text: i18n("Current: %1", String(_stylePage.backgroundColor))
+
+                    RowLayout
+                    {
+                        spacing: Maui.Style.space.small
+
+                        Rectangle
+                        {
+                            implicitWidth: Maui.Style.iconSizes.medium
+                            implicitHeight: Maui.Style.iconSizes.medium
+                            radius: Maui.Style.radiusV
+                            color: _stylePage.backgroundColor
+                            border.width: 1
+                            border.color: Qt.rgba(1, 1, 1, 0.15)
+                        }
+
+                        Button
+                        {
+                            text: i18n("Select Color")
+                            onClicked: _backgroundColorDialog.open()
+                        }
+                    }
+                }
+
+            }
+
+            Maui.SectionGroup
+            {
+                title: i18n("Theme")
+                description: i18n("Editor color scheme style.")
+
+                GridLayout
+                {
+                    columns: 2
+                    Layout.fillWidth: true
+                    opacity: enabled ? 1 : 0.5
+
+                    Repeater
+                    {
+                        model: TE.ColorSchemesModel {}
+
+                        delegate: Maui.GridBrowserDelegate
+                        {
+                            Layout.fillWidth: true
+                            checked: model.name === _stylePage.currentTheme
+                            onClicked: _stylePage.currentTheme = model.name
+                            label1.text: model.name
+
+                            template.iconComponent: Rectangle
+                            {
+                                implicitHeight: Math.max(_layout.implicitHeight + topPadding + bottomPadding, 64)
+                                color: _stylePage.backgroundColor
+                                radius: Maui.Style.radiusV
+
+                                Column
+                                {
+                                    id: _layout
+                                    anchors.fill: parent
+                                    anchors.margins: Maui.Style.space.small
+                                    spacing: 2
+
+                                    Text
+                                    {
+                                        wrapMode: Text.NoWrap
+                                        elide: Text.ElideLeft
+                                        width: parent.width
+                                        text: "QWERTY { @ }"
+                                        color: model.foreground
+                                        font.family: "Monospace"
+                                    }
+
+                                    Rectangle
+                                    {
+                                        radius: 2
+                                        height: 8
+                                        width: parent.width
+                                        color: model.highlight
+                                    }
+
+                                    Rectangle
+                                    {
+                                        radius: 2
+                                        height: 8
+                                        width: parent.width
+                                        color: model.color3
+                                    }
+
+                                    Rectangle
+                                    {
+                                        radius: 2
+                                        height: 8
+                                        width: parent.width
+                                        color: model.color4
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }
