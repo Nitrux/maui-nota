@@ -260,7 +260,6 @@ Loader
             anchors.fill: parent
             currentPath: FB.FM.homePath()
             settings.viewType : FB.FMList.LIST_VIEW
-            settings.filterType: FB.FMList.TEXT
             headBar.rightLayout.visible: false
             headBar.rightLayout.width: 0
             floatingFooter: false

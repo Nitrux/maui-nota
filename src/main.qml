@@ -251,7 +251,6 @@ Maui.ApplicationWindow
         FB.FileDialog
         {
             browser.settings.onlyDirs: false
-            browser.settings.filterType: FB.FMList.TEXT
             browser.settings.sortBy: FB.FMList.MODIFIED
 
             onClosed: destroy()
@@ -450,6 +449,9 @@ Maui.ApplicationWindow
 
     function openFile(url : string)
     {
+        if(!Nota.Server.shouldOpenFile(url))
+            return
+
         if(debugSidebarFlow)
         {
             console.log("[nota-debug] root openFile", String(url))
@@ -460,12 +462,16 @@ Maui.ApplicationWindow
 
     function openFiles(urls : variant)
     {
+        const filteredUrls = Nota.Server.filterOpenableFiles(urls)
+
         if(debugSidebarFlow)
         {
-            console.log("[nota-debug] root openFiles", JSON.stringify(urls))
+            console.log("[nota-debug] root openFiles",
+                        "input=", JSON.stringify(urls),
+                        "accepted=", JSON.stringify(filteredUrls))
         }
 
-        for(var url of urls)
+        for(var url of filteredUrls)
         {
             root.openFile(url)
         }

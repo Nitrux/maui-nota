@@ -75,6 +75,8 @@ public Q_SLOTS:
                 */
     bool isUrlOpen(const QString &url);
 
+    Q_INVOKABLE bool shouldOpenFile(const QString &url);
+    Q_INVOKABLE QStringList filterOpenableFiles(const QStringList &urls);
 
 private:
     QObject* m_qmlObject = nullptr;

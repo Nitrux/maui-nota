@@ -1,13 +1,105 @@
 #include "server.h"
 
+#include <QFile>
+#include <QFileInfo>
 #include <QGuiApplication>
+#include <QMimeDatabase>
 #include <QQuickWindow>
 #include <QQmlApplicationEngine>
 
-#include <MauiKit4/FileBrowsing/fmstatic.h>
-
 #include "notainterface.h"
 #include "notaadaptor.h"
+
+namespace
+{
+bool isKnownTextMime(const QString &mimeName)
+{
+    if (mimeName.startsWith(QLatin1String("text/"))) {
+        return true;
+    }
+
+    static const QStringList textualApplicationMimes = {
+        QStringLiteral("application/xml"),
+        QStringLiteral("application/yaml"),
+        QStringLiteral("application/javascript"),
+        QStringLiteral("application/json"),
+        QStringLiteral("application/pgp-keys"),
+        QStringLiteral("application/x-cmakecache"),
+        QStringLiteral("application/x-gitignore"),
+        QStringLiteral("application/x-kdevelop"),
+        QStringLiteral("application/x-kicad-project"),
+        QStringLiteral("application/x-perl"),
+        QStringLiteral("application/x-shellscript"),
+        QStringLiteral("application/x-yaml"),
+        QStringLiteral("application/vnd.kde.knotificationrc")
+    };
+
+    return textualApplicationMimes.contains(mimeName);
+}
+
+bool hasLikelyTextContent(const QString &localPath)
+{
+    QFile file(localPath);
+    if (!file.open(QIODevice::ReadOnly)) {
+        return false;
+    }
+
+    const QByteArray data = file.read(8192);
+    if (data.isEmpty()) {
+        return true;
+    }
+
+    int suspiciousBytes = 0;
+    for (const auto value : data) {
+        const unsigned char c = static_cast<unsigned char>(value);
+        if (c == '\0') {
+            return false;
+        }
+
+        // Treat uncommon control bytes as suspicious binary content.
+        if ((c < 0x09) || (c > 0x0D && c < 0x20)) {
+            ++suspiciousBytes;
+        }
+    }
+
+    return suspiciousBytes * 100 <= data.size() * 30;
+}
+
+bool isAmbiguousMime(const QString &mimeName)
+{
+    return mimeName.isEmpty()
+            || mimeName == QLatin1String("application/octet-stream")
+            || mimeName == QLatin1String("application/x-zerosize")
+            || mimeName == QLatin1String("inode/x-empty");
+}
+
+bool shouldAcceptUrl(const QUrl &url, const QMimeDatabase &mimeDb, QString *mimeNameOut = nullptr)
+{
+    if (!url.isValid()) {
+        return false;
+    }
+
+    const auto mimeName = mimeDb.mimeTypeForUrl(url).name();
+    if (mimeNameOut) {
+        *mimeNameOut = mimeName;
+    }
+
+    if (isKnownTextMime(mimeName)) {
+        return true;
+    }
+
+    if (!url.isLocalFile()) {
+        return false;
+    }
+
+    const QFileInfo info(url.toLocalFile());
+    if (!info.exists() || !info.isFile()) {
+        return false;
+    }
+
+    return isAmbiguousMime(mimeName) && hasLikelyTextContent(info.absoluteFilePath());
+}
+}
 
 QVector<QPair<QSharedPointer<OrgKdeNotaActionsInterface>, QStringList>> AppInstance::appInstances(const QString& preferredService)
 {
@@ -263,15 +355,31 @@ QStringList Server::filterFiles(const QStringList &urls)
 {
     qDebug() << "REQUEST FILES" << urls;
     QStringList res;
+    const QMimeDatabase mimeDb;
+
     for (const auto &url : urls) {
         const auto url_ = QUrl::fromUserInput(url);
-        qDebug() << "REQUEST FILES" << url_.toString() << FMStatic::getMime(url_);
+        QString mimeName;
+        const bool accepted = shouldAcceptUrl(url_, mimeDb, &mimeName);
+        qDebug() << "REQUEST FILES" << url_.toString() << mimeName;
 
-        if (FMStatic::checkFileType(FMStatic::FILTER_TYPE::TEXT, FMStatic::getMime(url_)))
+        if (accepted) {
             res << url_.toString();
+        }
     }
 
     qDebug() << "REQUEST FILES" << res;
 
     return res;
+}
+
+bool Server::shouldOpenFile(const QString &url)
+{
+    const QMimeDatabase mimeDb;
+    return shouldAcceptUrl(QUrl::fromUserInput(url), mimeDb);
+}
+
+QStringList Server::filterOpenableFiles(const QStringList &urls)
+{
+    return filterFiles(urls);
 }
