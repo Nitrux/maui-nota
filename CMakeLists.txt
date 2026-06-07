@@ -5,7 +5,7 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-set(NOTA_VERSION 4.0.3)
+set(NOTA_VERSION 4.0.4)
 add_compile_definitions(APP_COPYRIGHT_NOTICE="© 2019-2025 Maui Development Team")
 
 project(nota VERSION ${NOTA_VERSION})
@@ -29,7 +29,7 @@ set(QT_MAJOR_VERSION 6)
 
 set(REQUIRED_QT_VERSION 6.9)
 set(REQUIRED_KF_VERSION 6.13.0)
-set(REQUIRED_MAUI_VERSION 4.0.3)
+set(REQUIRED_MAUI_VERSION 4.0.4)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "Nota only supports Linux.")
