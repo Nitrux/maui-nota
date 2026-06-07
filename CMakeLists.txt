@@ -29,7 +29,7 @@ set(QT_MAJOR_VERSION 6)
 
 set(REQUIRED_QT_VERSION 6.9)
 set(REQUIRED_KF_VERSION 6.13.0)
-set(REQUIRED_MAUI_VERSION 4.0.4)
+set(REQUIRED_MAUIKIT_VERSION 4.0.4)
 
 if(NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
     message(FATAL_ERROR "Nota only supports Linux.")
@@ -44,7 +44,7 @@ include(KDECMakeSettings)
 find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Core Qml Quick Widgets DBus)
 find_package(KF6 ${REQUIRED_KF_VERSION} REQUIRED COMPONENTS I18n CoreAddons)
 
-find_package(MauiKit4 ${REQUIRED_MAUI_VERSION} REQUIRED COMPONENTS FileBrowsing TextEditor)
+find_package(MauiKit4 ${REQUIRED_MAUIKIT_VERSION} REQUIRED COMPONENTS FileBrowsing TextEditor)
 
 include(KDECompilerSettings NO_POLICY_SCOPE)
 include(KDEClangFormat)
