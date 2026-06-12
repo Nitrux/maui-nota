@@ -64,8 +64,6 @@ Maui.SplitViewItem
                             "title=", String(_editor.title))
             }
 
-            _languageSelector.syncCurrentIndex()
-
             if(String(_editor.fileUrl).length > 0)
             {
                 historyList.append(_editor.fileUrl)
@@ -81,8 +79,6 @@ Maui.SplitViewItem
                             "file=", String(_editor.fileUrl),
                             "splitIndex=", String(control.SplitView.splitIndex))
             }
-
-            _languageSelector.syncCurrentIndex()
         }
 
         onActiveFocusChanged:
@@ -184,33 +180,6 @@ Maui.SplitViewItem
 
             opacity: 0.5
         }
-    }
-
-    ComboBox
-    {
-        id: _languageSelector
-        visible: settings.showSyntaxHighlightingLanguages
-        model: _editor.document.getLanguageNameList()
-        currentIndex: -1
-        z: 2
-
-        anchors
-        {
-            right: parent.right
-            bottom: parent.bottom
-            margins: Maui.Style.space.medium
-        }
-
-        function syncCurrentIndex()
-        {
-            const languages = _editor.document.getLanguageNameList()
-            const currentLanguage = _editor.document.formatName
-            const nextIndex = languages.indexOf(currentLanguage)
-            currentIndex = nextIndex
-        }
-
-        onActivated: _editor.document.formatName = model[index]
-        Component.onCompleted: syncCurrentIndex()
     }
 
     Component.onCompleted:

@@ -109,19 +109,6 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
-            label1.text: i18n("Language Selector")
-            label2.text: i18n("Display the active syntax-highlighting language selector in the editor footer.")
-
-            Switch
-            {
-                checkable: true
-                checked: settings.showSyntaxHighlightingLanguages
-                onToggled: settings.showSyntaxHighlightingLanguages = !settings.showSyntaxHighlightingLanguages
-            }
-        }
-
-        Maui.FlexSectionItem
-        {
             label1.text: i18n("Syntax Highlighting")
             label2.text: i18n("Enable syntax highlighting for supported languages.")
 
