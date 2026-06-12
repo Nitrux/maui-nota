@@ -11,7 +11,6 @@ Maui.SettingsDialog
     Maui.SectionGroup
     {
         title: i18n("General")
-        description: i18n("Window-level shortcuts for opening files, browsing recents, and opening Nota dialogs.")
 
         Maui.FlexSectionItem
         {
@@ -102,7 +101,6 @@ Maui.SettingsDialog
     Maui.SectionGroup
     {
         title: i18n("Document")
-        description: i18n("Editing shortcuts that operate on the active document.")
 
         Maui.FlexSectionItem
         {

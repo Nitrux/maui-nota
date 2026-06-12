@@ -23,6 +23,7 @@ Maui.SettingsDialog
 
                 mfont: settings.font
                 model.onlyMonospaced: true
+                showStyle: false
 
                 onFontModified:
                 {
@@ -134,8 +135,8 @@ Maui.SettingsDialog
 
         Maui.FlexSectionItem
         {
-            label1.text: i18n("Colors")
-            label2.text: i18n("Configure the color scheme of the syntax highlighting. This configuration is not applied for rich text formats.")
+            label1.text: i18n("Color Scheme")
+            label2.text: i18n("Configure the color scheme of the editor.")
             enabled: settings.enableSyntaxHighlighting
 
             ToolButton
@@ -184,7 +185,7 @@ Maui.SettingsDialog
         Maui.SettingsPage
         {
             id: _stylePage
-            title: i18n("Colors")
+            title: i18n("Color Scheme")
             enabled: settings.enableSyntaxHighlighting
 
             property string currentTheme: appSettings.theme
@@ -273,108 +274,103 @@ Maui.SettingsDialog
 
             }
 
-            Maui.SectionGroup
+            Maui.FlexSectionItem
             {
-                title: i18n("Color")
-                description: i18n("Pick a custom editor background color.")
+                label1.text: i18n("Editor Background")
+                label2.text: i18n("Current: %1", String(_stylePage.backgroundColor))
 
-                Maui.FlexSectionItem
+                RowLayout
                 {
-                    label1.text: i18n("Background")
-                    label2.text: i18n("Current: %1", String(_stylePage.backgroundColor))
+                    spacing: Maui.Style.space.small
 
-                    RowLayout
+                    Rectangle
                     {
-                        spacing: Maui.Style.space.small
+                        implicitWidth: Maui.Style.iconSizes.medium
+                        implicitHeight: Maui.Style.iconSizes.medium
+                        radius: Maui.Style.radiusV
+                        color: _stylePage.backgroundColor
+                        border.width: 1
+                        border.color: Qt.rgba(1, 1, 1, 0.15)
+                    }
 
-                        Rectangle
-                        {
-                            implicitWidth: Maui.Style.iconSizes.medium
-                            implicitHeight: Maui.Style.iconSizes.medium
-                            radius: Maui.Style.radiusV
-                            color: _stylePage.backgroundColor
-                            border.width: 1
-                            border.color: Qt.rgba(1, 1, 1, 0.15)
-                        }
-
-                        Button
-                        {
-                            text: i18n("Select Color")
-                            onClicked: _backgroundColorDialog.open()
-                        }
+                    Button
+                    {
+                        text: i18n("Select Color")
+                        onClicked: _backgroundColorDialog.open()
                     }
                 }
+            }
+
+
+            Maui.FlexSectionItem
+            {
+                label1.text: i18n("Syntax Highlight Colors")
+                label2.text: i18n("Select a color scheme for the syntax highlight.")
 
             }
 
-            Maui.SectionGroup
+            GridLayout
             {
-                title: i18n("Theme")
-                description: i18n("Editor color scheme style.")
+                columns: 2
+                Layout.fillWidth: true
+                opacity: enabled ? 1 : 0.5
 
-                GridLayout
+                Repeater
                 {
-                    columns: 2
-                    Layout.fillWidth: true
-                    opacity: enabled ? 1 : 0.5
+                    model: TE.ColorSchemesModel {}
 
-                    Repeater
+                    delegate: Maui.GridBrowserDelegate
                     {
-                        model: TE.ColorSchemesModel {}
+                        Layout.fillWidth: true
+                        checked: model.name === _stylePage.currentTheme
+                        onClicked: _stylePage.currentTheme = model.name
+                        label1.text: model.name
 
-                        delegate: Maui.GridBrowserDelegate
+                        template.iconComponent: Rectangle
                         {
-                            Layout.fillWidth: true
-                            checked: model.name === _stylePage.currentTheme
-                            onClicked: _stylePage.currentTheme = model.name
-                            label1.text: model.name
+                            implicitHeight: Math.max(_layout.implicitHeight + topPadding + bottomPadding, 64)
+                            color: _stylePage.backgroundColor
+                            radius: Maui.Style.radiusV
 
-                            template.iconComponent: Rectangle
+                            Column
                             {
-                                implicitHeight: Math.max(_layout.implicitHeight + topPadding + bottomPadding, 64)
-                                color: _stylePage.backgroundColor
-                                radius: Maui.Style.radiusV
+                                id: _layout
+                                anchors.fill: parent
+                                anchors.margins: Maui.Style.space.small
+                                spacing: 2
 
-                                Column
+                                Text
                                 {
-                                    id: _layout
-                                    anchors.fill: parent
-                                    anchors.margins: Maui.Style.space.small
-                                    spacing: 2
+                                    wrapMode: Text.NoWrap
+                                    elide: Text.ElideLeft
+                                    width: parent.width
+                                    text: "QWERTY { @ }"
+                                    color: model.foreground
+                                    font.family: "Monospace"
+                                }
 
-                                    Text
-                                    {
-                                        wrapMode: Text.NoWrap
-                                        elide: Text.ElideLeft
-                                        width: parent.width
-                                        text: "QWERTY { @ }"
-                                        color: model.foreground
-                                        font.family: "Monospace"
-                                    }
+                                Rectangle
+                                {
+                                    radius: 2
+                                    height: 8
+                                    width: parent.width
+                                    color: model.highlight
+                                }
 
-                                    Rectangle
-                                    {
-                                        radius: 2
-                                        height: 8
-                                        width: parent.width
-                                        color: model.highlight
-                                    }
+                                Rectangle
+                                {
+                                    radius: 2
+                                    height: 8
+                                    width: parent.width
+                                    color: model.color3
+                                }
 
-                                    Rectangle
-                                    {
-                                        radius: 2
-                                        height: 8
-                                        width: parent.width
-                                        color: model.color3
-                                    }
-
-                                    Rectangle
-                                    {
-                                        radius: 2
-                                        height: 8
-                                        width: parent.width
-                                        color: model.color4
-                                    }
+                                Rectangle
+                                {
+                                    radius: 2
+                                    height: 8
+                                    width: parent.width
+                                    color: model.color4
                                 }
                             }
                         }

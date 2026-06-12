@@ -18,6 +18,7 @@ public:
 
 public Q_SLOTS:
     void append(const QUrl &url);
+    void clear();
     int indexOfName(const QString &query);
 
 private:

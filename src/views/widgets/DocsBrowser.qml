@@ -8,6 +8,7 @@ import org.mauikit.filebrowsing as FB
 Maui.AltBrowser
 {
     id: control
+    signal keyPress(var event)
     background: null
 
     enableLassoSelection: true
@@ -26,9 +27,16 @@ Maui.AltBrowser
         model: control.model
     }
 
+    Keys.enabled: true
+    Keys.onPressed: (event) =>
+    {
+        control.keyPress(event)
+        event.accepted = false
+    }
+
     Connections
     {
-        target: control.currentView
+        target: control
         function onItemsSelected(indexes)
         {
             for(var i in indexes)

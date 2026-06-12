@@ -20,10 +20,21 @@ DocsBrowser
     holder.title : i18n("No Recent Files!")
     holder.body: i18n("Here you will see your recently opened files")
 
-    headBar.farLeftContent: ToolButton
+    headBar.farLeftContent: RowLayout
     {
-        icon.name: "go-previous"
-        onClicked: control.StackView.view.pop()
+        spacing: 0
+
+        ToolButton
+        {
+            icon.name: "go-previous"
+            onClicked: control.StackView.view.pop()
+        }
+
+        ToolSeparator
+        {
+            topPadding: 10
+            bottomPadding: 10
+        }
     }
 
     model: Maui.BaseModel
@@ -53,6 +64,33 @@ DocsBrowser
         anchors.margins: Maui.Style.space.medium
     }
 
+    Loader
+    {
+        asynchronous: true
+        visible: historyList.count > 0
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: Maui.Style.space.big
+        sourceComponent: Maui.FloatingButton
+        {
+            id: _clearRecentButton
+            width: 32
+            height: 32
+            padding: Maui.Style.space.medium
+            icon.name: "edit-clear"
+            icon.width: 16
+            icon.height: 16
+
+            background: Rectangle
+            {
+                radius: 9
+                color: _clearRecentButton.color
+            }
+
+            onClicked: historyList.clear()
+        }
+    }
+
     Timer
     {
         id: _typingTimer
@@ -71,7 +109,7 @@ DocsBrowser
 
     Connections
     {
-        target: control.currentView
+        target: control
 
         function onKeyPress(event)
         {
@@ -105,7 +143,7 @@ DocsBrowser
 
         listDelegate: Maui.ListBrowserDelegate
         {
-            width: ListView.view.width
+            width: control.width
             iconSource: model.icon
             label1.text: model.label
             label2.text: model.url

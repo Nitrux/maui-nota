@@ -37,6 +37,19 @@ void HistoryModel::append(const QUrl &url)
     settings.endGroup();
 }
 
+void HistoryModel::clear()
+{
+    QSettings settings;
+    settings.beginGroup("HISTORY");
+    settings.remove("URLS");
+    settings.endGroup();
+
+    Q_EMIT this->preListChanged();
+    this->m_list.clear();
+    Q_EMIT this->postListChanged();
+    Q_EMIT this->countChanged();
+}
+
 int HistoryModel::indexOfName(const QString &query)
 {
     const auto it = std::find_if(this->items().constBegin(), this->items().constEnd(), [&](const FMH::MODEL &item) -> bool {
