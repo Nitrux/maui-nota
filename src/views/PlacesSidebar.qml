@@ -185,6 +185,17 @@ Loader
 
                 MenuItem
                 {
+                    text: i18n("Hidden Files")
+                    icon.name: "view-hidden"
+                    checked: browserView.settings.showHiddenFiles
+                    checkable: true
+                    onTriggered: browserView.settings.showHiddenFiles = !browserView.settings.showHiddenFiles
+                }
+
+                MenuSeparator {}
+
+                MenuItem
+                {
                     text: i18n("Show Folders First")
                     checked: browserView.settings.foldersFirst
                     checkable: true
