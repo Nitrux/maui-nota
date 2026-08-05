@@ -4,10 +4,10 @@ SPDX-FileCopyrightText: 2021 Carl Schwan <carlschwan@kde.org>
 SPDX-License-Identifier: CC0-1.0
 -->
 <component type="desktop">
-  <id>org.kde.nota</id>
+  <id>org.maui.nota</id>
   <metadata_license>CC0-1.0</metadata_license>
   <project_license>LGPL-3.0</project_license>
-  <launchable type="desktop-id">org.kde.nota.desktop</launchable>
+  <launchable type="desktop-id">org.maui.nota.desktop</launchable>
   <name>Nota</name>
   <name xml:lang="ar">نوتا</name>
   <name xml:lang="ca">Nota</name>

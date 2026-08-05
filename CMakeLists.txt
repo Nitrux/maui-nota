@@ -85,8 +85,8 @@ add_subdirectory(src)
 
 ki18n_install(po)
 
-install(FILES org.kde.nota.desktop DESTINATION ${KDE_INSTALL_APPDIR})
-install(FILES org.kde.nota.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
+install(FILES org.maui.nota.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+install(FILES org.maui.nota.metainfo.xml DESTINATION ${KDE_INSTALL_METAINFODIR})
 
 feature_summary(WHAT ALL FATAL_ON_MISSING_REQUIRED_PACKAGES)
 
