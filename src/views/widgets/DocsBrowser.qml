@@ -36,7 +36,7 @@ Maui.AltBrowser
 
     Connections
     {
-        target: control
+        target: control.currentView
         function onItemsSelected(indexes)
         {
             for(var i in indexes)
@@ -45,6 +45,11 @@ Maui.AltBrowser
                 addToSelection(item)
             }
         }
+    }
+
+    Connections
+    {
+        target: control
 
         function onKeyPress(event)
         {

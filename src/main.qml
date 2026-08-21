@@ -19,7 +19,7 @@ Maui.ApplicationWindow
     color: "transparent"
     background: null
 
-    title: currentEditor ? currentTab.title : ""
+    title: currentTab ? currentTab.title : ""
 
     readonly property alias currentTab : editorView.currentTab
     readonly property alias currentEditor: editorView.currentEditor

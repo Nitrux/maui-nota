@@ -20,6 +20,8 @@ DocsBrowser
     holder.title : i18n("No Recent Files!")
     holder.body: i18n("Here you will see your recently opened files")
 
+    Component.onCompleted: Qt.callLater(() => control.forceActiveFocus())
+
     headBar.farLeftContent: RowLayout
     {
         spacing: 0
@@ -130,7 +132,7 @@ DocsBrowser
         id: _selectionbar
 
         anchors.horizontalCenter: parent.horizontalCenter
-        width: Math.min(parent.width-(Maui.Style.space.medium*2), implicitWidth)
+        width: Math.min(Math.max(0, control.width - (Maui.Style.space.medium * 2)), implicitWidth)
         maxListHeight: root.height - (Maui.Style.contentMargins*2)
 
         onItemClicked: (index) => console.log(index)
