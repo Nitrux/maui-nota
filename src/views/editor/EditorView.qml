@@ -230,8 +230,8 @@ Pane
                 checked: mindex === tabView.currentIndex
                 text: tabInfo.title || ""
                 icon.name: tabInfo.iconName || ""
-                Maui.Controls.badgeText: tabInfo.badgeText
-                Maui.Controls.status: tabInfo.status
+                Maui.Controls.badgeText: tabInfo.badgeText || ""
+                Maui.Controls.status: tabInfo.status !== undefined ? tabInfo.status : Maui.Controls.Normal
 
                 onClicked:
                 {

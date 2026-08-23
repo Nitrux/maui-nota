@@ -11,8 +11,6 @@ Maui.AltBrowser
     signal keyPress(var event)
     background: null
 
-    enableLassoSelection: true
-
     gridView.itemSize: Math.min(200, Math.max(100, Math.floor(width* 0.3)))
     gridView.itemHeight: gridView.itemSize + Maui.Style.rowHeight
 
@@ -36,30 +34,12 @@ Maui.AltBrowser
 
     Connections
     {
-        target: control.currentView
-        function onItemsSelected(indexes)
-        {
-            for(var i in indexes)
-            {
-                const item =  control.model.get(indexes[i])
-                addToSelection(item)
-            }
-        }
-    }
-
-    Connections
-    {
         target: control
 
         function onKeyPress(event)
         {
             const index = control.currentIndex
             const item = control.model.get(index)
-
-            if((event.key == Qt.Key_Left || event.key == Qt.Key_Right || event.key == Qt.Key_Down || event.key == Qt.Key_Up) && (event.modifiers & Qt.ControlModifier) && (event.modifiers & Qt.ShiftModifier))
-            {
-                control.currentView.itemsSelected([index])
-            }
 
             if(event.key === Qt.Key_Return)
             {
@@ -103,50 +83,20 @@ Maui.AltBrowser
 
             Drag.mimeData: Drag.active ?
                                {
-                                   "text/uri-list": control.filterSelectedItems(model.path)
+                                   "text/uri-list": model.path
                                } : {}
 
 
-            isCurrentItem: parent.GridView.isCurrentItem || checked
+            isCurrentItem: parent.GridView.isCurrentItem
             label1.text: model.label
             imageSource: model.thumbnail
             iconSource: model.icon
             template.fillMode: Image.PreserveAspectFit
             iconSizeHint: height * 0.6
-            checkable: control.selectionMode || checked
-            checked: _selectionbar.contains(model.path)
-
-            onToggled: addToSelection(control.model.get(index))
-
-            Connections
-            {
-                target: _selectionbar
-                function onUriRemoved(uri)
-                {
-                    if(uri === model.path)
-                        _gridItemDelegate.checked = false
-                }
-
-                function onUriAdded(uri)
-                {
-                    if(uri === model.path)
-                        _gridItemDelegate.checked = true
-                }
-
-                function onCleared()
-                {
-                    _gridItemDelegate.checked = false
-                }
-            }
-
             onClicked: (mouse) =>
             {
                 control.currentIndex = index
-                if(control.selectionMode || (mouse.button == Qt.LeftButton && (mouse.modifiers & Qt.ControlModifier)))
-                {
-                    addToSelection(control.model.get(index))
-
-                }else if(Maui.Handy.singleClick)
+                if(Maui.Handy.singleClick)
                 {
                     openFile(model.path)
                 }
@@ -155,7 +105,7 @@ Maui.AltBrowser
             onDoubleClicked:
             {
                 control.currentIndex = index
-                if(!Maui.Handy.singleClick && !control.selectionMode)
+                if(!Maui.Handy.singleClick)
                 {
                     openFile(model.path)
                 }
@@ -179,7 +129,7 @@ Maui.AltBrowser
     {
         id: _listDelegate
 
-        isCurrentItem: ListView.isCurrentItem || checked
+        isCurrentItem: ListView.isCurrentItem
 
         height: Maui.Style.rowHeight *1.5
         width: ListView.view.width
@@ -187,7 +137,7 @@ Maui.AltBrowser
         Drag.keys: ["text/uri-list"]
         Drag.mimeData: Drag.active ?
                            {
-                               "text/uri-list": control.filterSelectedItems(model.path)
+                               "text/uri-list": model.path
                            } : {}
 
     label1.text: model.label
@@ -196,39 +146,10 @@ Maui.AltBrowser
     label4.text: model.mime
     iconSource: model.icon
     iconSizeHint: Maui.Style.iconSizes.medium
-    checkable: control.selectionMode || checked
-    checked: _selectionbar.contains(model.path)
-    onToggled: addToSelection(control.model.get(index))
-
-    Connections
-    {
-        target: _selectionbar
-        function onUriRemoved(uri)
-        {
-            if(uri === model.path)
-                _listDelegate.checked = false
-        }
-
-        function onUriAdded(uri)
-        {
-            if(uri === model.path)
-                _listDelegate.checked = true
-        }
-
-        function onCleared()
-        {
-            _listDelegate.checked = false
-        }
-    }
-
     onClicked: (mouse) =>
     {
         control.currentIndex = index
-        if(control.selectionMode || (mouse.button == Qt.LeftButton && (mouse.modifiers & Qt.ControlModifier)))
-        {
-            addToSelection(control.model.get(index))
-
-        }else if(Maui.Handy.singleClick)
+        if(Maui.Handy.singleClick)
         {
             openFile(model.path)
         }
@@ -237,7 +158,7 @@ Maui.AltBrowser
     onDoubleClicked:
     {
         control.currentIndex = index
-        if(!Maui.Handy.singleClick && !control.selectionMode)
+        if(!Maui.Handy.singleClick)
         {
            openFile(model.path)
         }
@@ -256,14 +177,4 @@ Maui.AltBrowser
     }
 }
 
-function filterSelectedItems(path)
-{
-    if(_selectionbar && _selectionbar.count > 0 && _selectionbar.contains(path))
-    {
-        const uris = _selectionbar.uris
-        return uris.join("\n")
-    }
-
-    return path
-}
 }

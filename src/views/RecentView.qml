@@ -16,11 +16,15 @@ DocsBrowser
     headBar.forceCenterMiddleContent: false
     floatingFooter: true
     holder.visible: historyList.count === 0
-    holder.emoji: "qrc:/assets/dialog-information.svg"
-    holder.title : i18n("No Recent Files!")
+    holder.emoji: "dialog-information"
+    holder.title : i18n("No Recent Files")
     holder.body: i18n("Here you will see your recently opened files")
 
-    Component.onCompleted: Qt.callLater(() => control.forceActiveFocus())
+    StackView.onStatusChanged:
+    {
+        if(StackView.status === StackView.Active)
+            Qt.callLater(() => control.currentView.forceActiveFocus())
+    }
 
     headBar.farLeftContent: RowLayout
     {
@@ -73,22 +77,10 @@ DocsBrowser
         anchors.bottom: parent.bottom
         anchors.right: parent.right
         anchors.margins: Maui.Style.space.big
-        sourceComponent: Maui.FloatingButton
+        sourceComponent: Button
         {
-            id: _clearRecentButton
-            width: 32
-            height: 32
-            padding: Maui.Style.space.medium
-            icon.name: "edit-clear"
-            icon.width: 16
-            icon.height: 16
-
-            background: Rectangle
-            {
-                radius: 9
-                color: _clearRecentButton.color
-            }
-
+            padding: Maui.Style.defaultPadding * 2
+            text: i18n("Clear All")
             onClicked: historyList.clear()
         }
     }
@@ -127,73 +119,4 @@ DocsBrowser
         }
     }
 
-    footer: Maui.SelectionBar
-    {
-        id: _selectionbar
-
-        anchors.horizontalCenter: parent.horizontalCenter
-        width: Math.min(Math.max(0, control.width - (Maui.Style.space.medium * 2)), implicitWidth)
-        maxListHeight: root.height - (Maui.Style.contentMargins*2)
-
-        onItemClicked: (index) => console.log(index)
-
-        onExitClicked:
-        {
-            control.selectionMode = false
-            clear()
-        }
-
-        listDelegate: Maui.ListBrowserDelegate
-        {
-            width: control.width
-            iconSource: model.icon
-            label1.text: model.label
-            label2.text: model.url
-
-            checkable: true
-            checked: true
-            onToggled: _selectionbar.removeAtIndex(index)
-        }
-
-        Action
-        {
-            text: i18n("Open")
-            icon.name: "document-open"
-            onTriggered:
-            {
-                const paths =  _selectionbar.uris
-                for(var i in paths)
-                    editorView.openTab(paths[i])
-
-                _selectionbar.clear()
-            }
-        }
-
-        Action
-        {
-            text: i18n("Share")
-            icon.name: "document-share"
-            onTriggered: Maui.Platform.shareFiles(_selectionbar.uris)
-        }
-
-        Action
-        {
-            text: i18n("Export")
-            icon.name: "document-export"
-            onTriggered: copyFilesTo(_selectionBar.uris)
-
-        }
-    }
-
-    function addToSelection(item)
-    {
-        if(_selectionbar.contains(item.path))
-        {
-            console.log("FIle exists already in selection", item.path)
-            _selectionbar.removeAtUri(item.path)
-            return
-        }
-
-        _selectionbar.append(item.path, item)
-    }
 }
