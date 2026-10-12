@@ -79,7 +79,6 @@ DocsBrowser
         anchors.margins: Maui.Style.space.big
         sourceComponent: Button
         {
-            padding: Maui.Style.defaultPadding * 2
             text: i18n("Clear All")
             onClicked: historyList.clear()
         }
