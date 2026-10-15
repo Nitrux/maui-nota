@@ -101,9 +101,29 @@ Loader
         footerMargins: Maui.Style.defaultPadding
         footBar.middleContent: ComboBox
         {
+            id: _placesComboBox
             Layout.fillWidth: true
+
+            function syncCurrentIndex()
+            {
+                const currentPath = String(browserView.currentPath)
+                for (let i = 0; i < placesModel.count; ++i)
+                {
+                    const place = placesModel.get(i)
+                    if (String(place.path) === currentPath)
+                    {
+                        if (currentIndex !== i)
+                            currentIndex = i
+                        return
+                    }
+                }
+
+                if (currentIndex !== -1)
+                    currentIndex = -1
+            }
             model: Maui.BaseModel
             {
+                id: placesModel
                 list: FB.PlacesList
                 {
                     groups: [FB.FMList.PLACES_PATH]
@@ -121,6 +141,26 @@ Loader
                 height: visible ? implicitHeight : 0
                 text: label
             }
+            Component.onCompleted: syncCurrentIndex()
+
+            Connections
+            {
+                target: placesModel
+                function onCountChanged()
+                {
+                    _placesComboBox.syncCurrentIndex()
+                }
+            }
+
+            Connections
+            {
+                target: browserView
+                function onCurrentPathChanged()
+                {
+                    _placesComboBox.syncCurrentIndex()
+                }
+            }
+
             onActivated:
             {
                 const place = model.get(index)

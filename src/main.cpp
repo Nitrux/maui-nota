@@ -8,11 +8,12 @@
 #include <QUrl>
 
 #include <KLocalizedString>
+#include <KLocalizedQmlContext>
 
 #include <MauiKit4/Core/mauiapp.h>
 #include <MauiKit4/TextEditor/moduleinfo.h>
 
-#include "../nota_version.h"
+#include "nota_version.h"
 
 // Models
 #include "models/historymodel.h"
@@ -99,7 +100,7 @@ Q_DECL_EXPORT int main(int argc, char *argv[])
     },
     Qt::QueuedConnection);
 
-    engine.rootContext()->setContextObject(new KLocalizedContext(&engine));
+    engine.rootContext()->setContextObject(new KLocalizedQmlContext(&engine));
 
     qmlRegisterSingletonInstance<Server>(NOTA_URI, 1, 0, "Server", server.get());
     qmlRegisterType<HistoryModel>(NOTA_URI, 1, 0, "History");
