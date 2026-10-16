@@ -56,3 +56,21 @@ executable(
 
 install_data('org.maui.nota.desktop', install_dir: get_option('datadir') / 'applications')
 install_data('org.maui.nota.metainfo.xml', install_dir: get_option('datadir') / 'metainfo')
+install_data('src/assets/nota.svg', install_dir: get_option('datadir') / 'icons' / 'hicolor' / 'scalable' / 'apps')
+
+translation_domain = 'nota'
+msgfmt = find_program('msgfmt')
+po_files = run_command('find', 'po', '-mindepth', '2', '-maxdepth', '2', '-type', 'f', '-name', translation_domain + '.po', check: true).stdout().strip().split('\n')
+foreach po_file : po_files
+    if po_file != ''
+        locale = po_file.split('/')[1]
+        custom_target(
+            'translation-' + locale,
+            input: po_file,
+            output: locale / (translation_domain + '.mo'),
+            command: [msgfmt, '--check', '-o', '@OUTPUT@', '@INPUT@'],
+            install: true,
+            install_dir: get_option('localedir') / locale / 'LC_MESSAGES',
+            install_tag: 'i18n')
+    endif
+endforeach
