@@ -57,7 +57,8 @@ target_link_libraries(${PROJECT_NAME}
     Qt6::Quick
     Qt6::Qml
     KF6::CoreAddons
-    KF6::I18n)
+    KF6::I18n
+    KF6::I18nQml)
 
 install(TARGETS ${PROJECT_NAME} ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES assets/nota.svg DESTINATION ${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps)

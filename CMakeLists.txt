@@ -10,6 +10,8 @@ add_compile_definitions(APP_COPYRIGHT_NOTICE="© 2019-2025 Maui Development Team
 
 project(nota VERSION ${NOTA_VERSION})
 
+include_directories("${CMAKE_CURRENT_BINARY_DIR}")
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
@@ -43,6 +45,8 @@ include(KDECMakeSettings)
 
 find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED NO_MODULE COMPONENTS Core Qml Quick Widgets DBus)
 find_package(KF6 ${REQUIRED_KF_VERSION} REQUIRED COMPONENTS I18n CoreAddons)
+set(QT_NO_PRIVATE_MODULE_WARNING ON CACHE BOOL
+    "MauiKit uses Qt's private WaylandClient API" FORCE)
 
 find_package(MauiKit4 ${REQUIRED_MAUIKIT_VERSION} REQUIRED COMPONENTS FileBrowsing TextEditor)
 
