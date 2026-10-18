@@ -84,7 +84,7 @@ msgstr "აქ გახსნა"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "ახალ ჩანართში გახსნა"
 
 #: views/editor/Editor.qml:133
@@ -583,7 +583,7 @@ msgstr "ჩანართის პოვნა"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "ყველას მონიშვნა"
 
 #~ msgid "Open Recent Files"

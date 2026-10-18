@@ -84,7 +84,7 @@ msgstr "Atvērt te"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Atvērt jaunā cilnē"
 
 #: views/editor/Editor.qml:133
@@ -581,5 +581,5 @@ msgstr "Meklēt cilni"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Atlasīt visu"

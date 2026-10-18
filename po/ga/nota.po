@@ -81,9 +81,9 @@ msgid "Open Here"
 msgstr ""
 
 #: views/editor/Editor.qml:122
-#, kde-format
-msgid "Open in New Tab"
-msgstr ""
+#, fuzzy, kde-format
+msgid "Open in new tab"
+msgstr "Oscail i gcluaisín nua"
 
 #: views/editor/Editor.qml:133
 #, kde-format
@@ -574,6 +574,6 @@ msgid "Find Tab"
 msgstr ""
 
 #: views/widgets/ShortcutsDialog.qml:171
-#, kde-format
-msgid "Select All"
-msgstr ""
+#, fuzzy, kde-format
+msgid "Select all"
+msgstr "Roghnaigh gach rud"

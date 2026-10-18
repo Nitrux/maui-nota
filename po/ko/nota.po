@@ -83,7 +83,7 @@ msgstr "여기에 열기"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "새 탭으로 열기"
 
 #: views/editor/Editor.qml:133
@@ -579,7 +579,7 @@ msgstr "탭 찾기"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "모두 선택"
 
 #~ msgid "Open Recent Files"

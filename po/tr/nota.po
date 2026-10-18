@@ -83,7 +83,7 @@ msgstr "Burada Aç"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Yeni Sekmede Aç"
 
 #: views/editor/Editor.qml:133
@@ -580,5 +580,5 @@ msgstr "Sekme Bul"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Tümünü Seç"

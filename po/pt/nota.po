@@ -81,7 +81,7 @@ msgstr "Abrir aqui"
 #: views/editor/Editor.qml:122
 #, fuzzy, kde-format
 #| msgid "Open in new tab"
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Abrir numa nova página"
 
 #: views/editor/Editor.qml:133
@@ -586,7 +586,7 @@ msgstr "Procurar uma Página"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Seleccionar Tudo"
 
 #~ msgid "Open Recent Files"

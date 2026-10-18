@@ -85,7 +85,7 @@ msgstr "Megnyitás itt"
 #: views/editor/Editor.qml:122
 #, fuzzy, kde-format
 #| msgid "Open in new tab"
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Megnyitás új lapon"
 
 #: views/editor/Editor.qml:133
@@ -604,7 +604,7 @@ msgstr "Lap keresése"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Összes kijelölése"
 
 #~ msgid "Open Recent Files"

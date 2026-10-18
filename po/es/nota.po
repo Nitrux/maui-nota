@@ -85,7 +85,7 @@ msgstr "Abrir aquí"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Abrir en una nueva pestaña"
 
 #: views/editor/Editor.qml:133
@@ -583,5 +583,5 @@ msgstr "Encontrar pestaña"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Seleccionar todo"

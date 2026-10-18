@@ -84,7 +84,7 @@ msgstr "Avaa tähän"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Avaa uuteen välilehteen"
 
 #: views/editor/Editor.qml:133
@@ -582,7 +582,7 @@ msgstr "Etsi välilehti"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Valitse kaikki"
 
 #~ msgid "Open Recent Files"

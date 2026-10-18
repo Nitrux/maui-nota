@@ -84,7 +84,7 @@ msgstr "افتح هنا"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "افتح في لسان جديد"
 
 #: views/editor/Editor.qml:133
@@ -581,7 +581,7 @@ msgstr "لسان البحث"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "حدّد الكلّ"
 
 #~ msgid "Open Recent Files"

@@ -84,7 +84,7 @@ msgstr "Abrir aqui"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Abrir em uma nova aba"
 
 #: views/editor/Editor.qml:133
@@ -581,7 +581,7 @@ msgstr "Localizar aba"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Selecionar tudo"
 
 #~ msgid "Open Recent Files"

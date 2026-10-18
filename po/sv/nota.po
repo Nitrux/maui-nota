@@ -83,7 +83,7 @@ msgstr "Öppna här"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Öppna under ny flik"
 
 #: views/editor/Editor.qml:133
@@ -580,7 +580,7 @@ msgstr "Sök flik"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Markera alla"
 
 #~ msgid "Open Recent Files"

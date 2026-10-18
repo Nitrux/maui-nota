@@ -84,7 +84,7 @@ msgstr "Odpri tukaj"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Odpri v novem zavihku"
 
 #: views/editor/Editor.qml:133
@@ -581,7 +581,7 @@ msgstr "Najdi zavihek"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Izberi vse"
 
 #~ msgid "Open Recent Files"

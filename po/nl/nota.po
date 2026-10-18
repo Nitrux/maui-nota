@@ -83,7 +83,7 @@ msgstr "Hier openen"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "In nieuw tabblad openen"
 
 #: views/editor/Editor.qml:133
@@ -580,7 +580,7 @@ msgstr "Tabblad zoeken"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Alles selecteren"
 
 #~ msgid "Open Recent Files"

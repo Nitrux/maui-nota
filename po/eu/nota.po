@@ -86,7 +86,7 @@ msgstr "Ireki hemen"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "Ireki fitxa berrian"
 
 #: views/editor/Editor.qml:133
@@ -583,7 +583,7 @@ msgstr "Bilatu fitxa"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "Hautatu dena"
 
 #~ msgid "Open Recent Files"

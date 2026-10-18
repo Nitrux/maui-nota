@@ -83,7 +83,7 @@ msgstr "अत्र उद्घाटयतु"
 
 #: views/editor/Editor.qml:122
 #, kde-format
-msgid "Open in New Tab"
+msgid "Open in new tab"
 msgstr "New Tab इत्यत्र उद्घाटयन्तु"
 
 #: views/editor/Editor.qml:133
@@ -578,5 +578,5 @@ msgstr "ट्याब् अन्वेष्यताम्"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "सर्वं चिनोतु"

@@ -80,9 +80,9 @@ msgid "Open Here"
 msgstr ""
 
 #: views/editor/Editor.qml:122
-#, kde-format
-msgid "Open in New Tab"
-msgstr ""
+#, fuzzy, kde-format
+msgid "Open in new tab"
+msgstr "在新标签页中打开"
 
 #: views/editor/Editor.qml:133
 #, kde-format
@@ -576,5 +576,5 @@ msgstr "查找标签页"
 
 #: views/widgets/ShortcutsDialog.qml:171
 #, kde-format
-msgid "Select All"
+msgid "Select all"
 msgstr "全部选择"
