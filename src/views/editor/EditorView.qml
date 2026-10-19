@@ -372,7 +372,6 @@ Pane
             text: _tabView.count
             font.bold: true
             font.pointSize: Maui.Style.fontSizes.small
-            onClicked: _tabView.openOverview()
             background: Rectangle
             {
                 color: Maui.Theme.alternateBackgroundColor
