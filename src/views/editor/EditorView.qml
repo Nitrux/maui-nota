@@ -59,7 +59,7 @@ Pane
                 }
             }
 
-            tabBar.visible: true
+            tabBar.visible: !compactToolbarLayout
             tabBar.showNewTabButton: false
             tabBar.leftContent: [
                 Loader
@@ -330,6 +330,26 @@ Pane
             leftContent: [
                 ToolButton
                 {
+                    icon.name: _sideBarView.sideBar.visible ? "sidebar-collapse" : "sidebar-expand"
+                    onClicked: _sideBarView.sideBar.toggle()
+                    visible: settings.enableSidebar
+                    checked: _sideBarView.sideBar.visible
+
+                    ToolTip.delay: 1000
+                    ToolTip.timeout: 5000
+                    ToolTip.visible: hovered
+                    ToolTip.text: i18n("Toggle side bar")
+                },
+
+                ToolSeparator
+                {
+                    visible: settings.enableSidebar
+                    topPadding: 10
+                    bottomPadding: 10
+                },
+
+                ToolButton
+                {
                     action: newFileAction
                     display: ToolButton.IconOnly
                 },
@@ -355,11 +375,75 @@ Pane
                 }
             ]
 
-            rightContent: Loader
+            rightContent: [
+                Loader
+                {
+                    asynchronous: true
+                    active: _tabView.count > 1
+                    visible: active
+                    sourceComponent: _tabOverviewButtonComponent
+                },
+
+                ToolSeparator
+                {
+                    visible: _tabView.count > 1
+                    topPadding: 10
+                    bottomPadding: 10
+                },
+
+                Loader
+                {
+                    asynchronous: true
+                    sourceComponent: _overflowMenuButtonComponent
+                }
+            ]
+        }
+    }
+
+    Component
+    {
+        id: _tabOverviewButtonComponent
+
+        ToolButton
+        {
+            display: ToolButton.IconOnly
+            onClicked: _tabView.openOverview()
+
+            contentItem: RowLayout
             {
-                asynchronous: true
-                sourceComponent: _overflowMenuButtonComponent
+                spacing: Maui.Style.space.small
+
+                Maui.Icon
+                {
+                    Layout.alignment: Qt.AlignVCenter
+                    Layout.preferredWidth: Maui.Style.iconSizes.small
+                    Layout.preferredHeight: Maui.Style.iconSizes.small
+                    source: "view-grid"
+                    color: Maui.Theme.textColor
+                }
+
+                ToolButton
+                {
+                    Layout.alignment: Qt.AlignVCenter
+                    text: _tabView.count
+                    display: ToolButton.TextOnly
+                    font.bold: true
+                    font.pointSize: Maui.Style.fontSizes.small
+                    ToolTip.visible: false
+                    onClicked: {}
+
+                    background: Rectangle
+                    {
+                        color: Maui.Theme.alternateBackgroundColor
+                        radius: Maui.Style.radiusV
+                    }
+                }
             }
+
+            ToolTip.delay: 1000
+            ToolTip.timeout: 5000
+            ToolTip.visible: hovered
+            ToolTip.text: i18n("Show tabs")
         }
     }
 

@@ -94,7 +94,7 @@ Loader
         Maui.Theme.colorSet: Maui.Theme.Window
         background: Rectangle
         {
-            color: Maui.Theme.backgroundColor
+            color: "transparent"
             radius: Maui.Style.radiusV
         }
 
