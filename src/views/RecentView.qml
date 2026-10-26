@@ -14,7 +14,13 @@ DocsBrowser
     altHeader: Maui.Handy.isMobile
     headerMargins: Maui.Style.defaultPadding
     headBar.forceCenterMiddleContent: false
+    headBar.preferredHeight: Maui.Style.rowHeightAlt
+    headBar.topPadding: Maui.Style.defaultPadding
+    headBar.bottomPadding: Maui.Style.defaultPadding
     floatingFooter: true
+    footBar.preferredHeight: Maui.Style.rowHeightAlt
+    footBar.topPadding: Maui.Style.defaultPadding
+    footBar.bottomPadding: Maui.Style.defaultPadding
     holder.visible: historyList.count === 0
     holder.emoji: "dialog-information"
     holder.title : i18n("No Recent Files")

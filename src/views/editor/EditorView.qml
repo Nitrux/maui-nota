@@ -333,9 +333,9 @@ Pane
             anchors.bottomMargin: Maui.Style.contentMargins
             visible: compactToolbarLayout
             position: ToolBar.Footer
-            preferredHeight: Maui.Style.rowHeight
-            topPadding: Maui.Style.space.small
-            bottomPadding: Maui.Style.space.small
+            preferredHeight: Maui.Style.rowHeightAlt
+            topPadding: Maui.Style.defaultPadding
+            bottomPadding: Maui.Style.defaultPadding
             forceCenterMiddleContent: false
             background: Rectangle
             {
