@@ -38,8 +38,9 @@ DocsBrowser
 
         ToolSeparator
         {
-            topPadding: 10
-            bottomPadding: 10
+            height: Maui.Style.space.medium
+            topPadding: 0
+            bottomPadding: 0
         }
     }
 

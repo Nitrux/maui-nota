@@ -33,7 +33,7 @@ Pane
             id: _tabView
 
             anchors.fill: parent
-            anchors.bottomMargin: _bottomToolBar.visible ? _bottomToolBar.height + _bottomToolBar.anchors.bottomMargin : 0
+            anchors.bottomMargin: _bottomToolBar.visible ? _bottomToolBar.height + _bottomToolBar.anchors.bottomMargin + _bottomToolBar.topPadding : 0
             clip: true
 
             Maui.Controls.showCSD: true
@@ -61,6 +61,14 @@ Pane
 
             tabBar.visible: !compactToolbarLayout
             tabBar.showNewTabButton: false
+            tabBar.topPadding: Maui.Style.defaultPadding
+            tabBar.bottomPadding: Maui.Style.defaultPadding
+            tabBar.implicitHeight: Math.max(
+                tabBar.count > 0 && tabBar.itemAt(0) ? tabBar.itemAt(0).implicitHeight : 0,
+                Maui.Style.rowHeightAlt,
+                Maui.Style.rowHeight,
+                Maui.Style.iconSize + Maui.Style.defaultPadding * 2
+            ) + tabBar.topPadding + tabBar.bottomPadding
             tabBar.leftContent: [
                 Loader
                 {
@@ -86,9 +94,10 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: settings.enableSidebar && !compactToolbarLayout
-                    topPadding: 10
-                    bottomPadding: 10
+                    topPadding: 0
+                    bottomPadding: 0
                 },
 
                 ToolButton
@@ -107,9 +116,10 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: !compactToolbarLayout && !!currentEditor
-                    bottomPadding: 10
-                    topPadding: 10
+                    bottomPadding: 0
+                    topPadding: 0
                 },
 
                 ToolButton
@@ -142,9 +152,10 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: !compactToolbarLayout && !!currentEditor
-                    bottomPadding: 10
-                    topPadding: 10
+                    bottomPadding: 0
+                    topPadding: 0
                 },
 
                 Loader
@@ -157,18 +168,20 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: !compactToolbarLayout && _tabView.count > 1
-                    topPadding: 10
-                    bottomPadding: 10
+                    topPadding: 0
+                    bottomPadding: 0
                 }
             ]
 
             tabBar.rightContent: [
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: !compactToolbarLayout
-                    bottomPadding: 10
-                    topPadding: 10
+                    bottomPadding: 0
+                    topPadding: 0
                 },
 
                 Loader
@@ -181,9 +194,10 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: compactToolbarLayout && _tabView.count > 1
-                    topPadding: 10
-                    bottomPadding: 10
+                    topPadding: 0
+                    bottomPadding: 0
                 },
 
                 Loader
@@ -226,7 +240,7 @@ Pane
                 }
 
                 autoExclusive: true
-                width: tabView.mobile ? ListView.view.width : Math.max(160, Math.min(260, implicitWidth))
+                width: tabView.mobile ? tabView.width : Math.max(160, Math.min(260, implicitWidth))
                 checked: mindex === tabView.currentIndex
                 text: tabInfo.title || ""
                 icon.name: tabInfo.iconName || ""
@@ -319,6 +333,9 @@ Pane
             anchors.bottomMargin: Maui.Style.contentMargins
             visible: compactToolbarLayout
             position: ToolBar.Footer
+            preferredHeight: Maui.Style.rowHeight
+            topPadding: Maui.Style.space.small
+            bottomPadding: Maui.Style.space.small
             forceCenterMiddleContent: false
             background: Rectangle
             {
@@ -343,9 +360,10 @@ Pane
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: settings.enableSidebar
-                    topPadding: 10
-                    bottomPadding: 10
+                    topPadding: 0
+                    bottomPadding: 0
                 },
 
                 ToolButton
@@ -381,19 +399,25 @@ Pane
                     asynchronous: true
                     active: _tabView.count > 1
                     visible: active
+                    Layout.minimumHeight: Maui.Style.rowHeight
+                    Layout.maximumHeight: Maui.Style.rowHeight
+                    Layout.preferredHeight: Maui.Style.rowHeight
+                    Layout.alignment: Qt.AlignVCenter
                     sourceComponent: _tabOverviewButtonComponent
                 },
 
                 ToolSeparator
                 {
+                    height: Maui.Style.space.medium
                     visible: _tabView.count > 1
-                    topPadding: 10
-                    bottomPadding: 10
+                    topPadding: 0
+                    bottomPadding: 0
                 },
 
                 Loader
                 {
                     asynchronous: true
+                    Layout.alignment: Qt.AlignVCenter
                     sourceComponent: _overflowMenuButtonComponent
                 }
             ]
@@ -408,6 +432,12 @@ Pane
         {
             display: ToolButton.IconOnly
             onClicked: _tabView.openOverview()
+            Layout.alignment: Qt.AlignVCenter
+            height: Maui.Style.rowHeight
+            leftPadding: Maui.Style.space.small
+            rightPadding: Maui.Style.space.small
+            topPadding: 0
+            bottomPadding: 0
 
             contentItem: RowLayout
             {
