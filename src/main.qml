@@ -114,7 +114,7 @@ Maui.ApplicationWindow
         template.iconSource: "dialog-warning"
         template.iconVisible: true
 
-        standardButtons: Dialog.Ok | Dialog.Discard
+        standardButtons: Dialog.Cancel | Dialog.Discard
         onDiscarded:
         {
             close()
@@ -124,7 +124,7 @@ Maui.ApplicationWindow
                 callback()
             }
         }
-        onAccepted: close()
+        onRejected: close()
     }
 
 
