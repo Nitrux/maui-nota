@@ -24,9 +24,32 @@ Item
     readonly property string title : splitTitleAt(currentIndex)
 
     readonly property alias editor : _splitView.currentItem
+    property url previewSource: ""
+    property var previewResult: null
 
     onTitleChanged: logSplitState("layout title changed")
     onCurrentItemChanged: logSplitState("layout current item changed")
+
+    function capturePreview()
+    {
+        if (!control.visible || control.width <= 0 || control.height <= 0)
+            return
+
+        control.grabToImage(function(result)
+        {
+            if (result && result.url)
+            {
+                control.previewResult = result
+                control.previewSource = result.url
+            }
+        })
+    }
+
+    onVisibleChanged:
+    {
+        if (visible)
+            Qt.callLater(control.capturePreview)
+    }
 
     Maui.SplitView
     {
