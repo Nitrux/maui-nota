@@ -128,7 +128,7 @@ Maui.SplitViewItem
 
                     MenuItem
                     {
-                        text: i18n("Open in new tab")
+                        text: i18n("Open in New Tab")
                         icon.name: "tab-new"
                         onTriggered:
                         {
