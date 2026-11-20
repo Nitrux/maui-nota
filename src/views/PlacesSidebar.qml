@@ -99,6 +99,8 @@ Loader
         }
 
         footerMargins: Maui.Style.defaultPadding
+        footerContainer.leftMargin: leftMargin
+        footerContainer.rightMargin: rightMargin
         footBar.middleContent: ComboBox
         {
             id: _placesComboBox
@@ -177,6 +179,8 @@ Loader
             }
         }
         headerMargins: Maui.Style.defaultPadding
+        headerContainer.leftMargin: leftMargin
+        headerContainer.rightMargin: rightMargin
         headBar.leftContent: Maui.ToolActions
         {
             expanded: true
