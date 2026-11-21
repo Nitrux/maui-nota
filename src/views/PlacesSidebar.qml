@@ -133,6 +133,7 @@ Loader
             }
 
             textRole: "label"
+            displayText: currentIndex >= 0 ? currentText : (browserView.currentFMList ? browserView.currentFMList.pathName || String(browserView.currentPath) : "")
             delegate: ItemDelegate
             {
                 required property string label
