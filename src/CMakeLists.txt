@@ -64,3 +64,11 @@ install(TARGETS ${PROJECT_NAME} ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 install(FILES assets/nota.svg DESTINATION ${KDE_INSTALL_ICONDIR}/hicolor/scalable/apps)
 
 qt_finalize_target(${PROJECT_NAME})
+
+target_precompile_headers(${PROJECT_NAME} PRIVATE
+    <QDebug>
+    <QFileInfo>
+    <QGuiApplication>
+    <QQmlEngine>
+    <QQuickWindow>
+)
