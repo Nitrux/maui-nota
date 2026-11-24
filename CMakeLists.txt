@@ -10,6 +10,10 @@ add_compile_definitions(APP_COPYRIGHT_NOTICE="© 2019-2025 Maui Development Team
 
 project(nota VERSION ${NOTA_VERSION})
 
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "/usr" CACHE PATH "Install path prefix" FORCE)
+endif()
+
 include_directories("${CMAKE_CURRENT_BINARY_DIR}")
 
 set(CMAKE_CXX_STANDARD 17)
